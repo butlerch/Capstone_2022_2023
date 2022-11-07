@@ -1,0 +1,149 @@
+/* Style Description: Styles & positions search box seen on the "Landing page" experience. */
+
+/* The Search/Navigation Card */
+.searchContainer {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2%;
+    background-color: #fbfbff;
+}
+
+
+/* Desktop Variation (floating card on a background) */
+@media (min-width: 768px) {
+    .searchContainer {
+        width: 500px;
+        height: fit-content;
+        margin: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 25px;
+        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    }
+}
+
+
+/* "Search Box" Component Positioning */
+.searchCardTitle {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+
+/* Search Bar Styling & Alignment */
+.defaultSearch {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.searchBarContainer {
+    position: relative;
+    display: flex;
+    margin-right: 25px;
+    width: 100%;
+}
+
+.searchBar {
+    border: 1px solid #5f467d;
+    border-radius: 20px;
+    height: 25px;
+    width: 100%;
+    padding: 2px 23px 2px 30px;
+    outline: 0;
+    background-color: #fdfdff;
+}
+
+.searchIcon {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 14px;
+}
+
+.clearIcon {
+    position: absolute;
+    top: 9px;
+    right: 8px;
+    width: 12px;
+    cursor: pointer;
+    visibility: hidden;
+}
+
+
+/* Advanced Search Menu Styling & Alignment */
+.advancedSearch {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.advancedSearchMenu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding-right: 25px;
+    padding-left: 25px;
+    text-align: center;
+    color: #3B0C77;
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 26px;
+}
+
+.advancedSearchOptions {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+
+/* "Surprise Me Button" Alignment & Padding */
+.surpriseMe {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+}
+
+
+/* Hidden Element Toggle */
+.hidden {
+    visibility: hidden;
+}
+
+/* Search Error Messages */
+
+.searchError {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    color: #992222;
+    font-family: 'Montserrat', sans-serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 12px;
+    padding-top: 5px;
+    padding-bottom: 20px;
+}

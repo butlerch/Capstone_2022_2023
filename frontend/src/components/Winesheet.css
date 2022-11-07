@@ -1,0 +1,164 @@
+/* Style Description: Styles & positions a single winesheet; represents the component /winesheets/<id> routes to. */
+
+/* Identifies the total space the content can occupy and centers it.*/
+.winesheetPageContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+/* Card Styling and Positioning (DESKTOP) */
+@media (min-width: 769px) {
+    .winesheetPageCard {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        width: 90%;
+        background-color: #fbfbff;
+    }
+
+
+    .winesheetPageCardItems {
+        display: grid;
+        grid-template-columns: 1fr 8fr 7fr 1fr;
+        grid-template-areas: "navArrow technicalData downloadPreview navArrow";
+        width: 100%;
+        margin: 7%;
+    }
+
+    .navArrow {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .mobile {
+        display: none;
+    }
+}
+
+
+/*  Card Styling and Positioning (MOBILE)  */
+@media (max-width: 768px) {
+    .winesheetPageCardItems {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        margin: 1em;
+    }
+
+    .navArrow {
+        display: none;
+    }
+
+    .mobile {
+        display: block;
+        margin: 25px;
+    }
+}
+
+/* Positions and styles the text elements.*/
+.technicalData {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: fit-content;
+    padding: 5%;
+}
+
+.technicalDataHeader {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+.technicalDataGrid {
+    grid-area: technicalData;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.technicalDataGridItem {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.technicalDataGridProperty {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 50px;
+    color: #310866;
+}
+
+.technicalDataGridValue {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    color: #342044;
+}
+
+
+/* Styles the Preview Image */
+.downloadPreviewElements {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 7%;
+}
+
+.downloadButton {
+    margin: 25px;
+}
+
+
+.previewContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+}
+
+/* Contains the relative positioning for the favorite button.*/
+.thumbnailContainer {
+    display: grid;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    position: relative;
+}
+
+.winesheetPageThumbnail {
+    max-width: 250px;
+    background: #FFFFFF;
+    border: #C0C0C0 solid 2px;
+    border-radius: 25px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+
+.favoriteButton {
+    position: absolute;
+    top: -25px;
+    right: -25px;
+    cursor: pointer;
+}
+
+
+

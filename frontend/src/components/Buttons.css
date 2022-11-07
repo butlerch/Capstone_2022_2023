@@ -1,0 +1,139 @@
+/* Style Description: Styling for the various buttons throughout the site. */
+
+/* Text Buttons (ex: Button Tag) */
+.textButton {
+    background: none;
+    border: none;
+    padding: 0;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Icon Buttons */
+.iconButton {
+    cursor: pointer;
+}
+
+/* Floating-Action-Button (w/ Icon) */
+.circleButton {
+    background-color: #5f3dc4;
+    color: #f3f0f8;
+    border: 2px solid #5f3dc4;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    padding: 1em;
+    cursor: pointer;
+}
+
+/* Styling & Formatting for the Dark Buttons (ex: A Tag) */
+.primaryButtonContainer{
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+}
+
+.primaryButton {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    text-decoration: none;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 23px;
+
+    border-radius: 25px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.secondaryButton {
+    display: inline-block;
+    box-sizing: border-box;
+    position: relative;
+    text-decoration: none;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 23px;
+
+    border-radius: 25px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    transition: all 0.2s;
+}
+
+/* Button Sizes */
+.narrow {
+    padding: 0.2em 1.45em;
+    margin: .2em;
+}
+
+.big {
+    padding: 1em;
+}
+
+/* Button Color Schemes */
+
+.whiteBordered {
+    background: #FFFFFF;
+    color: #310866;
+    border-color: #310866;
+}
+
+.mediumPurple {
+    color: #FFFFFF;
+    background: #8162B5;
+    border: 1px solid #310866;
+    cursor: pointer;
+}
+
+.mediumPurple:hover {
+    border: 1px solid #310866;
+    background: #601eaf;
+}
+
+.mediumPurple:active {
+    background-color: #8d63c1;
+}
+
+
+.darkPurple {
+    color: #FFFFFF;
+    background: #54357b;
+    border: 1px solid #54357b;
+}
+
+.darkPurple:hover {
+    border: 1px solid #310866;
+    background-color: #601eaf;
+}
+
+.darkPurple:active {
+    background-color: #8d63c1;
+}
+
+/* Changes the cursor of a tagged element to "pointer." */
+.pointer {
+    cursor: pointer;
+}
+
+/* Separating/Dividing Bar */
+.separator {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.separatorBar {
+    border: 0;
+    height: 2px;
+    background-image: linear-gradient(to right, transparent, lightslategray, transparent);
+}

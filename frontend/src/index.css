@@ -1,0 +1,31 @@
+/* Style Description: Enforces the default rules throughout the hierarchy.*/
+
+html, body {
+    height: 100%;
+}
+
+html, body, #root {
+    box-sizing: border-box;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    font-family: 'Montserrat', 'Nunito', 'Roboto', 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Rules for formatting code blocks. */
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Rules for formatting links. */
+a {
+    text-decoration: none;
+}
+

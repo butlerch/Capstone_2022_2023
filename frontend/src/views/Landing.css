@@ -1,0 +1,51 @@
+/* Style Description: Styles & positions the "Landing page" experience. */
+
+/* Desktop */
+@media (min-width: 768px) {
+
+    /* This container hides any elements that exceed the viewport.*/
+    .landingContainer {
+        height: calc(100vh - 176px);
+        margin-left: auto;
+        margin-right: auto;
+        overflow: hidden;
+        width: 90%;
+        position: relative;
+        display: grid;
+        justify-content: center;
+        grid-template-columns: repeat(auto-fill, 400px);
+        grid-template-rows: min-content;
+    }
+
+    /* Individual techsheet preview thumbnails.*/
+    .wineGridItem {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        background: #FFFFFF;
+        border: #c0c0c0 solid 2px;
+        border-radius: 25px;
+        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+        margin: 2em;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+
+    /* The Page Container */
+    .landingContainer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1;
+        background: #fbfbff;
+    }
+
+    /* The grid of images doesn't display on mobile - just the search bar.*/
+    .wineGridItem {
+        display: none;
+    }
+}

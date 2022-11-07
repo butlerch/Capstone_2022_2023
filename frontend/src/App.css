@@ -1,0 +1,39 @@
+/* Style Description: Positions the overall layout (navigation bars & content window). */
+
+.appBody {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    width: 100%;
+}
+
+.navigationSpacer {
+    height: 88px;
+    width: 100%;
+}
+
+/* Desktop Content */
+@media (min-width: 768px) {
+    #contentBlock {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        width: 100%;
+        background: #FFFFFF url("images/grapes_faded.png") no-repeat fixed;
+        background-size: cover;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    #contentBlock {
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+        width: 100%;
+        background-color: #FFFFFF;
+    }
+}
+
+
+

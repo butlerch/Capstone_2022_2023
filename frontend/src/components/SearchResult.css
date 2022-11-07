@@ -1,0 +1,56 @@
+/* Style Description: Styles an individual winesheet entry on the "Search Results page" experience. */
+
+.wineSearchResultContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    background-color: #fbfbff;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    padding: 1em;
+}
+
+/* == TEXT STYLING & POSITIONING == */
+.wineSearchResultTextContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    padding: 1em;
+}
+
+.wineSearchResultTitle {
+    font-family: 'Montserrat', 'Nunito', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 2em;
+    line-height: 1.4em;
+    color: #310866;
+
+}
+
+.wineSearchResultSubtitle {
+    font-family: 'Montserrat', 'Nunito', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.2em;
+    line-height: 1.2em;
+    margin-left: .1em;
+    color: #6c6c6c;
+}
+
+
+/* == THUMBNAIL STYLE & POSITIONING == */
+.wineSearchResultThumbnailContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 1%;
+    margin-left: 2em;
+}
+
+.wineSearchResultThumbnail {
+    background: #FFFFFF;
+    width: 200px;
+}
+
+

@@ -1,0 +1,20 @@
+/* Style Description: Styling for the "Loading" component, an svg spinner. */
+.loadingContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    width: 100%;
+    background-color: #FFFFFF;
+}
+
+.spinner {
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+

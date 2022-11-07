@@ -1,0 +1,31 @@
+/* Style Description: Styling for the customized dropdown menu. */
+
+/* Container for the dropdown select button.*/
+.selectContainer {
+    width: fit-content;
+    margin: 1%;
+}
+
+/* The dropdown select element styling*/
+.selectDropdown {
+    position: relative;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    width: fit-content;
+    padding-right: 30px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 1px solid #C0C0C0;
+    border-radius: 3px;
+    background: #fbfbff url("../images/arrow_drop_down.svg") no-repeat;
+    background-position: right 5px top 50%;
+    color: #3B0C77;
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+}

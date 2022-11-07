@@ -1,0 +1,53 @@
+/* Style Description: Text formatting useed throughout the site. */
+
+.title {
+    font-family: 'Montserrat', 'Nunito', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 2em;
+    line-height: 1.4em;
+    color: #310866;
+}
+
+.subtitle {
+    font-family: 'Montserrat', 'Nunito', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.2em;
+    line-height: 1.2em;
+    margin-left: .1em;
+    color: #6c6c6c;
+}
+
+.headingContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.heading {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
+    letter-spacing: 0.225px;
+    color: #310866;
+}
+
+.text {
+    font-family: 'Montserrat', serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    color: black;
+}
+
+.extraCushion {
+    margin-top: 3em;
+    margin-bottom: 1em;
+}
+
+.sideSpace {
+    margin-right: .5em;
+}

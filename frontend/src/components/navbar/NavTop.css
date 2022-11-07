@@ -1,0 +1,103 @@
+/* Style Description: Styling for the top, fixed navigation bar. */
+
+/* Desktop Positioning Variations */
+@media (min-width: 768px) {
+    .mobile {
+        display: none;
+    }
+
+    .desktop {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+}
+
+/* Mobile Positioning Variations */
+@media (max-width: 768px) {
+    .mobile {
+        width: fit-content;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .desktop {
+        display: none;
+    }
+}
+
+/* Containers for Elements */
+.topBar {
+    width: 100%;
+    height: 88px;
+    position: fixed;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.topBarContentContainer {
+    height: 80%;
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+/* Styling for the Logo */
+.logoContainer {
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#logo {
+    width: 200px;
+    height: 50px;
+}
+
+
+/* Styling for the Menu Items */
+.menuContainer {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0;
+}
+
+.menuItem {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    text-decoration: none;
+}
+
+.menuItem > img {
+    margin: 1%;
+}
+
+.menuText {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 26px;
+    color: #3b0c77;
+    text-decoration: none;
+}
+
+.menuSpacer {
+    width: 20px;
+}

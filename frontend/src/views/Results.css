@@ -1,0 +1,115 @@
+/* Style Description: Styles and positions the "Search Results page" experience. */
+
+/* Containers */
+.searchResultsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    width: 90%;
+    height: 100%;
+    margin: auto;
+    background: #FFFFFF;
+    color: #000000;
+}
+
+
+/* == SIDEBAR (not visible on mobile) == */
+
+/* Desktop */
+@media (min-width: 768px) {
+    .searchResultsSidebar {
+        display: flex;
+        flex-flow: column wrap;
+        max-width: 30%;
+        margin-top: 25px;
+        margin-bottom: 25px;
+        margin-left: 25px;
+        margin-right: 0;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .searchResultsSidebar {
+        display: none;
+    }
+}
+
+/* Styling for Filter Categories */
+.filterControls {
+    display: flex;
+    flex-direction: row;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.selectedTitle {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 25px;
+    color: #310866;
+}
+
+.clearButton {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 1.00833px;
+    color: #310866;
+    margin: 4px;
+    cursor: pointer;
+}
+
+.filterTitle {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
+    letter-spacing: 0.225px;
+    color: #310866;
+}
+
+.filterElements {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+
+/* == SEARCH RESULTS == */
+.searchResultsContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 2em 4em;
+}
+
+/* Positions & sizes a group of SearchResult components.*/
+/* Changes the minimum width of ALL of the SearchResult components; the thumbnail is > 200px. */
+.results {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    row-gap: 2em;
+}
+
+.resultsCount {
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: right;
+    letter-spacing: 1.00833px;
+    color: #54357b;
+    margin-right: 3em;
+}
