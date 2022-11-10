@@ -1,0 +1,6 @@
+The APIs can be tested by using the tool Postman.
+Endpoint = google cloud host url + keywords
+For example,
+https://winedatalake.wl.r.appspot.com/techsheets/bottle_id
+
+It will return a row of bottle data by bottle_id, and the corresponding HTTP status code such as 200 OK, 404 Not found
