@@ -1,0 +1,6 @@
+Clarify the differences of each files in server folder:
+api.py: Wine data, and it returns the specific wine data from the winery_data table.
+
+user.py: User profile, and it includes the favorite wine list. It return HTTP status code 204 no content or 404 not found.
+
+verify.jwt.py: I will figure it out in a week. 
