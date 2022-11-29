@@ -1,6 +1,6 @@
 Clarify the differences of each files in server folder:
-api.py: Wine data, and it returns the specific wine data from the winery_data table.
+api.py: All endpoint implemented. I still need to figure out how to make the request working for the endpoints such as GET /Search.
 
-user.py: User profile, and it includes the favorite wine list. It return HTTP status code 204 no content or 404 not found.
+The login/sign up function is working currently with Auth0. It just need to add the web url to the Auth0 application page.
 
-verify.jwt.py: I will figure it out in a week. 
+I sent the email to Aaron, and waiting for response for the API request error. 
