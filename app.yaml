@@ -6,6 +6,32 @@ runtime: python38
 # then it uses gunicorn on Port#8080 (required port) to run api.py
 entrypoint: gunicorn -b :8080 --chdir ./server api:app
 
+# WARNING!!! YOU MUST CREATE env_variables.yaml AND POPULATE IT WITH YOUR PROJECT'S ENVIRONMENTAL VARIABLES.
+# You can find mentions of these environmental variables at the top of each Python file.
+# Alternatively, you could use Google Secrets or another service to hide credentials.
+# Assumptions: The postgres database is hosted on G Cloud SQL and is part of the App Engine project.
+# Note: In .yaml files, enclose variable strings in ' '.
+# ______________________________[BEGIN SAMPLE env_variables.yaml]
+# env_variables:
+#   DB_INSTANCE: 'YOUR_PROJECT_NAME:YOUR_PROJECT_DB_REGION:YOUR_PROJECT_DB_NAME'
+#   DB_HOST: '/cloudsql/YOUR_PROJECT_NAME:YOUR_PROJECT_DB_REGION:YOUR_PROJECT_DB_NAME/'
+#   DB_IP: 'YOUR_DB_IP'
+#   DB_PORT: 5432
+#   DB_USER: 'postgres'
+#   DB_PASSWORD: 'YOUR_PASSWORD_GOES_HERE'
+#   DATABASE_NAME: 'postgres'
+#   AUTH_DOMAIN: 'YOUR_AUTH0_DOMAIN'
+#   AUTH_CLIENT_ID: 'YOUR_AUTH0_CLIENT_ID'
+#   AUTH_CLIENT_SECRET: 'YOUR_AUTH0_CLIENT_SECRET'
+#   AUTH_ALGORITHMS: [ "RS256" ]
+#   AUTH_SCOPE: "read:users"
+#   API_CLIENT_ID: 'YOUR_AUTH0_API_CLIENT_ID'
+#   API_CLIENT_SECRET: 'YOUR_AUTH0_API_CLIENT_SECRET'
+#   API_AUDIENCE: 'YOUR_AUTH0_API_AUDIENCE'
+# ______________________________[End Sample]
+includes:
+  - env_variables.yaml
+
 handlers:
   # FRONTEND HANDLER
   # "url" is a regular expression; if the user types anything into the browser in the pattern {domain}/, this triggers.
