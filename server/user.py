@@ -1,26 +1,29 @@
+# Description: This blueprint contains all the routing for user endpoints and resource management.
+
 import json
 from flask import jsonify, make_response
 from flask import Blueprint, request
 import psycopg2
 from server.verify_jwt import verify_jwt, AuthError
+from dotenv import load_dotenv
+import os
+
+# Load credentials from environmental variables
+load_dotenv()
 
 # Blueprint routing
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-# Connection parameters for Auth0 instance
-domain = 'winedatalake.us.auth0.com'
-client_id = 'Nncz6b9skBCCAkyR4AFUyEdct3URx5Kd'
-client_secret = '7TuyECcDnsACqDk8E98AVF4PD4Pf9QJ4Bm6q5asgYKOd0FqR1C3t4xoSrwskc9ko'
-api_audience = 'aF3LnZv!&W@CB*@JZhTR8k7ZPT3gBGqvNdGmyJLspA#9T6hLJx59&pvAZ6'
-
-# Connection to User database
-db_connection = psycopg2.connect(
-    host='database-1.cy2oippu9yih.us-west-2.rds.amazonaws.com',
-    port=5432,
-    user='postgres',
-    password='ostate4826',
-    database='postgres'
+# == Database Instance  ==
+db = psycopg2.connect(
+    host=os.environ.get('DB_HOST'),
+    port=os.environ.get('DB_PORT'),
+    user=os.environ.get('DB_USER'),
+    password=os.environ.get('DB_PASSWORD'),
+    database=os.environ.get('DATABASE_NAME')
 )
+
+cursor = db.cursor()
 
 
 # Description: Error Handler for Auth0/JWT Errors
@@ -34,22 +37,20 @@ def handle_auth_error(ex):
 # Description: Given a user_auth id, this function attempts to retrieve a user from the database;
 # if the user doesn't exist, they are created and stored in the database; user data is returned as JSON.
 def retrieve_user(user_auth):
-    cursor = db_connection.cursor()
-
     # Confirm that the user exists in the database
-    cursor.execute("SELECT * FROM users WHERE user_auth = '{}';".format(user_auth))
+    cursor.execute(cursor.mogrify("SELECT * FROM users WHERE user_auth = %s", (user_auth,)))
     query_results = cursor.fetchall()
 
     # If there is no such user, create one.
-    if len(query_results) != 1:
+    if len(query_results) < 1:
         # Add a new user ot the database.
         cursor.execute(cursor.mogrify(
             "INSERT INTO users(user_auth, location, fav_techsheets, fav_wineries) VALUES (%s, NULL, '[]', '[]')",
             (user_auth,)))
-        db_connection.commit()
+        db.commit()
 
         # Retrieve the newly-created user from the database.
-        cursor.execute("SELECT * FROM users WHERE user_auth = '{}';".format(user_auth))
+        cursor.execute(cursor.mogrify("SELECT * FROM users WHERE user_auth = %s", (user_auth,)))
         query_results = cursor.fetchall()
 
     # Return the user object.
@@ -60,7 +61,6 @@ def retrieve_user(user_auth):
 
 # Description: Given a bottle id, this function retrieves a bottle from the database and returns a JSON object.
 def make_returnable_bottle(bottle_id):
-    cursor = db_connection.cursor()
     cursor.execute("SELECT * FROM bottle_data WHERE bottle_id = '{}';".format(bottle_id))
 
     query_results = cursor.fetchall()
@@ -110,9 +110,11 @@ def wines(bottle_id):
     user_auth = payload["sub"]
     user_data = retrieve_user(user_auth)
 
+
     # Given a user and a wine, return whether-or-not that user has marked that wine as a favorite.
     if request.method == 'GET':
         # Search for the wine and, if found, return 204.
+        print("Data: " + str(user_data))
         for bottle in user_data["fav_techsheets"]:
             if bottle["bottle_id"] == bottle_id:
                 res = make_response('', 204)
@@ -126,7 +128,6 @@ def wines(bottle_id):
 
     # Adds a favorite wine to the user's list of favorites.
     if request.method == 'POST':
-        cursor = db_connection.cursor()
         target_techsheet = make_returnable_bottle(bottle_id)
 
         # Is the bottle being added already one of the user's favorites?
@@ -138,20 +139,20 @@ def wines(bottle_id):
 
         # If not already in the list, add the target techsheet to the user's list of favorite techsheets.
         user_data["fav_techsheets"].append(target_techsheet)
-        updated_list = json.dumps(user_data["fav_techsheets"])
+        updated_list = json.dumps(user_data["fav_techsheets"], default = str)
 
         # Update the user entity.
         cursor.execute(cursor.mogrify("UPDATE users SET fav_techsheets = %s WHERE user_auth = %s",
                                       (updated_list, user_auth)))
 
-        db_connection.commit()
+        db.commit()
         res = make_response('Added Favorite', 201)
         res.headers['Content-Type'] = 'application/json'
         return res
 
     # Adds a favorite wine to the user's list of favorites.
     if request.method == 'DELETE':
-        cursor = db_connection.cursor()
+
         target_techsheet = make_returnable_bottle(bottle_id)
 
         # Create a list that excludes the bottle to be removed.
@@ -164,7 +165,7 @@ def wines(bottle_id):
         cursor.execute(cursor.mogrify("UPDATE users SET fav_techsheets = %s WHERE user_auth = %s",
                                       (json.dumps(updated_list), user_auth)))
 
-        db_connection.commit()
+        db.commit()
         res = make_response('Removed Favorite', 201)
         res.headers['Content-Type'] = 'application/json'
         return res
