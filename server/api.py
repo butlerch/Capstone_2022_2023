@@ -1,24 +1,31 @@
+# Description: API entrypoint; contains all the functionality for accessing the database.
+
 import string
 import psycopg2
 from flask import Flask, jsonify, request, abort, Response, make_response
 import re
-from server.user import user
+import user
 from authlib.integrations.flask_client import OAuth
-
-# create flask app
+import os
+from dotenv import load_dotenv
 from flask_cors import CORS
 
+# Load credentials from environmental variables
+load_dotenv()
+
+# Create Flask App
 app = Flask(__name__)
-# Handles cross-origin routing between the frontend & backend
+
+# Handles cross-origin resource sharing between the frontend & backend
 CORS(app)
 
 # == Setup Auth0 ==
 oauth = OAuth(app)
-DOMAIN = 'winedatalake.us.auth0.com'
-ALGORITHMS = ["RS256"]
-CLIENT_ID = 'Nncz6b9skBCCAkyR4AFUyEdct3URx5Kd'
-CLIENT_SECRET = 'aF3LnZv!&W@CB*@JZhTR8k7ZPT3gBGqvNdGmyJLspA#9T6hLJx59&pvAZ6'
-SCOPE = "read:users"
+DOMAIN = os.environ.get('AUTH_DOMAIN')
+ALGORITHMS = os.environ.get('AUTH_ALGORITHMS')
+CLIENT_ID = os.environ.get('AUTH_CLIENT_ID')
+CLIENT_SECRET = os.environ.get('AUTH_CLIENT_SECRET')
+SCOPE = os.environ.get('AUTH_SCOPE')
 
 auth0 = oauth.register(
     'auth0',
@@ -32,19 +39,20 @@ auth0 = oauth.register(
     },
 )
 
-# Connection information for the database
-connection = psycopg2.connect(
-    host='database-1.cy2oippu9yih.us-west-2.rds.amazonaws.com',
-    port=5432,
-    user='postgres',
-    password='ostate4826',
-    database='postgres'
+# == Database Instance  ==
+db = psycopg2.connect(
+    host=os.environ.get('DB_HOST'),
+    port=os.environ.get('DB_PORT'),
+    user=os.environ.get('DB_USER'),
+    password=os.environ.get('DB_PASSWORD'),
+    database=os.environ.get('DATABASE_NAME')
 )
 
-cursor = connection.cursor()
+cursor = db.cursor()
 
 # Registers the route for the User Entity (located in user.py)
-# app.register_blueprint(user.bp)
+app.register_blueprint(user.bp)
+
 
 def make_a_returnable_single(query_results, colnames, num_bottles):
     '''
@@ -71,6 +79,7 @@ def make_a_returnable_multiple(query_results, colnames):
     '''
     This function helps build a json object
     '''
+
     cursor.execute("SELECT COUNT(*) FROM bottle_data;")
     num_bottles = int(cursor.fetchall()[0][0])
     returnable = []
@@ -193,6 +202,7 @@ def random_bottle_data():
     url params: quantity
     variables: <none>, int
     '''
+
     quantity = request.args.get('quantity')
     if not quantity:
         quantity = 1
@@ -212,6 +222,7 @@ def techsheets_by_id(bottle_id):
     '''
     This function returns a row of bottle data by bottle_id
     '''
+
     cursor.execute(
         "SELECT * FROM bottle_data WHERE bottle_id = '{}';".format(bottle_id))
     query_results = cursor.fetchall()
@@ -233,6 +244,7 @@ def return_bottle_data():
     url params: quantity
     values: "all", int
     '''
+
     quantity = request.args.get('quantity')
     if not quantity:
         quantity = 'all'
@@ -258,6 +270,7 @@ def sort_by_winery_name():
     values: ["Alloro","Anne Amie","Archery Summit","Boedecker","Ken Writght
     Cellars","Minimus","Omero","Origin"]
     '''
+
     winery_name = request.args.get('wineryName')
     if not winery_name:
         abort(404)
@@ -279,6 +292,7 @@ def sort_by_soil_type():
     url params: soils
     values:
     '''
+
     soils = request.args.get('soils')
     if not soils:
         abort(404)
@@ -300,6 +314,7 @@ def sort_by_year():
     url params: year
     values:
     '''
+
     year = request.args.get('year')
     if not year:
         abort(404)
@@ -330,6 +345,7 @@ def sort_by_varietal():
     Blanc","Semillon","Siegerrebe","Syrah","Tannat","Tempranillo","Touriga
     Nacional","Vermentino","Viognier","Zinfandel"]
     '''
+
     varietals = request.args.get('varietals')
     if not varietals:
         abort(404)
@@ -349,16 +365,19 @@ def sort_by_varietal():
 @app.route('/varietalNames', methods=['GET'])
 def varietal_names_in_bottle_data():
     returnable = []
+
     cursor.execute("SELECT DISTINCT wine_name, varietals FROM bottle_data;")
     query_results = cursor.fetchall()
     for query_result in query_results:
         varietals = re.split(',|and', query_result[0]) + re.split(',|and', query_result[1])
         for varietal in varietals:
             varietal = re.sub("[0-9]%*", "", varietal)
-            varietal = re.sub("\”", "", varietal)
+            # Remove forward/backward curly quotes
             varietal = re.sub("\“", "", varietal)
+            varietal = re.sub("\”", "", varietal)
             varietal = string.capwords(varietal, " ")
-            if varietal.strip() not in returnable and varietal != "Null":
+            varietal = varietal.strip();
+            if varietal not in returnable and varietal != "NULL" and varietal != "Null" and len(varietal) > 0:
                 returnable.append(varietal.strip())
     return jsonify({"varietals": returnable})
 
@@ -368,6 +387,7 @@ def list_of_wineries():
     '''
     '''
     returnable = []
+
     cursor.execute("SELECT DISTINCT winery_name FROM bottle_data;")
     query_results = cursor.fetchall()
     if len(query_results) < 1:
@@ -389,6 +409,7 @@ def varietal_names_list():
     '''
     This function returns all varietal names found in the varietal_data table
     '''
+
     cursor.execute("SELECT varietal_name FROM varietal_data;")
     query_results = cursor.fetchall()
     if len(query_results) < 1:
@@ -409,6 +430,7 @@ def winery_info():
     winery_name = request.args.get('wineryName')
     if not winery_name:
         abort(404)
+
     cursor.execute(
         "SELECT * FROM winery_data WHERE winery_name ILIKE '{}';"
         .format(winery_name))
@@ -430,6 +452,7 @@ def wineries():
     '''
     This function returns all winery names found in the winery_data table
     '''
+
     cursor.execute("SELECT DISTINCT winery_name FROM winery_data;")
     query_results = cursor.fetchall()
     if len(query_results) < 1:
@@ -448,8 +471,8 @@ def custom_404(error):
 
 # driver function
 if __name__ == '__main__':
-    #app.run(host='0.0.0.0', port=5001)
-    app.run(host='localhost', port=8080)
+    app.run(host='0.0.0.0', port=8080)
+    # app.run(host='localhost', port=8080)
 
 '''
 return list of varietals available at each winery

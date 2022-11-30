@@ -1,14 +1,21 @@
-import json
+# Description: This class verifies a request's JWT given a domain, audience, and encodin algorithm.
+
 from six.moves.urllib.request import urlopen
 from functools import wraps
-
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify, _request_ctx_stack
 from flask_cors import cross_origin
 from jose import jwt
+import json
+import os
 
-AUTH0_DOMAIN = 'winedatalake.us.auth0.com'
-API_AUDIENCE = 'aF3LnZv!&W@CB*@JZhTR8k7ZPT3gBGqvNdGmyJLspA#9T6hLJx59&pvAZ6'
-ALGORITHMS = ["RS256"]
+# Loads environment variables
+load_dotenv()
+
+# Connection parameters for Auth0 instance
+DOMAIN = os.environ.get('AUTH_DOMAIN')
+AUDIENCE = os.environ.get('API_AUDIENCE')
+ALGORITHMS = os.environ.get('AUTH_ALGORITHM')
 
 
 class AuthError(Exception):
@@ -27,7 +34,7 @@ def verify_jwt(request):
                          "description":
                              "Authorization header is missing"}, 401)
 
-    jsonurl = urlopen("https://" + AUTH0_DOMAIN + "/.well-known/jwks.json")
+    jsonurl = urlopen("https://" + DOMAIN + "/.well-known/jwks.json")
     jwks = json.loads(jsonurl.read())
     try:
         unverified_header = jwt.get_unverified_header(token)
@@ -59,8 +66,8 @@ def verify_jwt(request):
                 token,
                 rsa_key,
                 algorithms=ALGORITHMS,
-                audience=API_AUDIENCE,
-                issuer="https://" + AUTH0_DOMAIN + "/"
+                audience=AUDIENCE,
+                issuer="https://" + DOMAIN + "/"
             )
         except jwt.ExpiredSignatureError:
             raise AuthError({"code": "token_expired",
