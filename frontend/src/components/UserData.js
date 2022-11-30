@@ -35,6 +35,7 @@ export default function UserData() {
                         Authorization: `Bearer ${token}`,
                     }
                 });
+
                 setUserData(res.data)
             } catch (err) {
                 /* Display the error. */
