@@ -1,0 +1,16 @@
+Users can collect their favourite wines by clicking on the heart icon, when the heart changes from hollow to solid, the collection is successful. The user can go to the collection page to see the wines they have collected, which is a list of wines in chronological order, and by clicking on the item in the list, the user can jump to the wine page again.
+
+
+The whole function is realised as follows.
+For front end development:
+A love icon is added to the wine presentation screen, and the position of the icon can be set via CSS to allow it to be presented in the top right corner. The status of the icon (solid means it is collected, hollow means it is not collected) is determined by the field isLiked returned by the server, if true, the icon is solid.
+Add a click event to this icon, and when the user clicks on it, the current collection status of the wine is judged, and if it is collected, the user is deemed to have uncollected it, and if it is not collected, the user is deemed to have collected it. Call API /like with  in the corresponding wine id and the current action (like = true or flase).
+When the /like API returns, if the request is successful, the icon undergoes the corresponding status change, if unsuccessful, the user is prompted that the operation has failed.
+Then add a new favourites list page calling /like-list API to show the current user's favourites, adding a click event to each item that will jump to the corresponding wine presentation page.
+
+For back end development:
+Add a new UserLikeWine relationship table to record the user's collection of wines. The fields are userId, isLike, wineId, date and the primary key is formed by (userId, wineId). Add two new APIs /like and /like-list
+
+When the /like interface is called from the front end, if like=true is passed, the table is looked up and if there is no record corresponding to (userId, wineId), a new record is added. If like=false is passed, the corresponding (userId, wineId) record is deleted.
+
+As for /likelist api, it finds all the wines in the current requested user's collection, sorted by time, and returns an array to the front end.
