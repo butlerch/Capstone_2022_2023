@@ -13,6 +13,10 @@ function NavBottom() {
 
     return <div className="navBottomBar">
         <div className="bottomBarElements">
+            <Link to="/submit" className="bottomBarText">Submit</Link>
+        </div>
+
+        <div className="bottomBarElements">
             <Link to="/about" className="bottomBarText">About</Link>
             <span className="seperator">|</span>
             <Link to="/contact" className="bottomBarText">Contact</Link>
