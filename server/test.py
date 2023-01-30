@@ -33,13 +33,23 @@ auth0 = oauth.register(
 )
 
 # Connection information for the database
+# connection = psycopg2.connect(
+#     host='database-1.cy2oippu9yih.us-west-2.rds.amazonaws.com',
+#     port=5432,
+#     user='postgres',
+#     password='ostate4826',
+#     database='postgres'
+# )
+
+# == Database Instance  ==
 connection = psycopg2.connect(
-    host='database-1.cy2oippu9yih.us-west-2.rds.amazonaws.com',
+    host='database-1.cgp3pmph8kno.us-west-2.rds.amazonaws.com',
     port=5432,
     user='postgres',
     password='ostate4826',
-    database='postgres'
+    database='winedatalakedb'
 )
+
 
 cursor = connection.cursor()
 query_string = "SELECT * FROM bottle_data"
