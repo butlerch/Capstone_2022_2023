@@ -6,14 +6,17 @@ import {Link} from "react-router-dom";
 
 // Style & Components
 import './NavBottom.css';
+import {useAuth0} from "@auth0/auth0-react";
 
 
 // Component Description: The bottom-most/footer navigation bar.
 function NavBottom() {
+    const {loginWithRedirect, isAuthenticated, logout, user} = useAuth0();
 
     return <div className="navBottomBar">
         <div className="bottomBarElements">
-            <Link to="/submit" className="bottomBarText">Submit</Link>
+
+            {isAuthenticated && <Link to="/submit" className="bottomBarText">Submit</Link>}
         </div>
 
         <div className="bottomBarElements">
