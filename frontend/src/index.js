@@ -27,6 +27,7 @@ import App from './App';
 // Testing
 import reportWebVitals from './test/reportWebVitals';
 import Results from "./views/Results";
+import Submit from "./views/Submit";
 
 
 // Auth0 Configuration
@@ -61,6 +62,7 @@ root.render(<Auth0Provider {...providerConfig}>
                         <Route path="about" element={<About/>}/>
                         <Route path="contact" element={<Contact/>}/>
                         <Route path="developer" element={<Developer/>}/>
+                        <Route path="submit" element={<Submit/>}/>
                         <Route path="winesheets" element={<Winesheets/>}>
                             <Route path=":winesheetId" element={<Winesheet/>}/>
                         </Route>
