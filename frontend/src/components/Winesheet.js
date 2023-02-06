@@ -18,11 +18,7 @@ import prevIcon from '../images/arrow_back.svg'
 import nextIcon from '../images/arrow_forward.svg'
 
 // Helper Functions
-import {
-    parseNeighbors,
-    parseTechnicalData,
-    parseOverview, parseFilePaths
-} from "../utils/parseData";
+import {parseFilePaths, parseNeighbors, parseOverview, parseTechnicalData} from "../utils/parseData";
 
 // Component Description: Displays a single winesheet.
 export default function Winesheet() {

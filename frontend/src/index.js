@@ -51,25 +51,23 @@ const providerConfig = {
 // Renders the root of the application.
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Auth0Provider {...providerConfig}>
-        <React.StrictMode>
-            {/* Routing/Paths */}
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<App/>}>
-                        <Route index element={<Landing/>}/>
-                        <Route path="results" element={<Results/>}/>
-                        <Route path="profile" element={<Profile/>}/>
-                        <Route path="about" element={<About/>}/>
-                        <Route path="contact" element={<Contact/>}/>
-                        <Route path="developer" element={<Developer/>}/>
-                        <Route path="submit" element={<Submit/>}/>
-                        <Route path="winesheets" element={<Winesheets/>}>
-                            <Route path=":winesheetId" element={<Winesheet/>}/>
-                        </Route>
+        {/* Routing/Paths */}
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<App/>}>
+                    <Route index element={<Landing/>}/>
+                    <Route path="results" element={<Results/>}/>
+                    <Route path="profile" element={<Profile/>}/>
+                    <Route path="about" element={<About/>}/>
+                    <Route path="contact" element={<Contact/>}/>
+                    <Route path="developer" element={<Developer/>}/>
+                    <Route path="submit" element={<Submit/>}/>
+                    <Route path="winesheets" element={<Winesheets/>}>
+                        <Route path=":winesheetId" element={<Winesheet/>}/>
                     </Route>
-                </Routes>
-            </BrowserRouter>
-        </React.StrictMode>
+                </Route>
+            </Routes>
+        </BrowserRouter>
     </Auth0Provider>
 );
 
