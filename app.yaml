@@ -1,4 +1,3 @@
-env: standard
 runtime: python38
 
 # PRODUCTION SERVER ENTRYPOINT
@@ -6,31 +5,29 @@ runtime: python38
 # then it uses gunicorn on Port#8080 (required port) to run api.py
 entrypoint: gunicorn -b :8080 --chdir ./server api:app
 
-# WARNING!!! YOU MUST CREATE env_variables.yaml AND POPULATE IT WITH YOUR PROJECT'S ENVIRONMENTAL VARIABLES.
-# You can find mentions of these environmental variables at the top of each Python file.
-# Alternatively, you could use Google Secrets or another service to hide credentials.
-# Assumptions: The postgres database is hosted on G Cloud SQL and is part of the App Engine project.
-# Note: In .yaml files, enclose variable strings in ' '.
-# ______________________________[BEGIN SAMPLE env_variables.yaml]
-# env_variables:
-#   DB_INSTANCE: 'YOUR_PROJECT_NAME:YOUR_PROJECT_DB_REGION:YOUR_PROJECT_DB_NAME'
-#   DB_HOST: '/cloudsql/YOUR_PROJECT_NAME:YOUR_PROJECT_DB_REGION:YOUR_PROJECT_DB_NAME/'
-#   DB_IP: 'YOUR_DB_IP'
-#   DB_PORT: 5432
-#   DB_USER: 'postgres'
-#   DB_PASSWORD: 'YOUR_PASSWORD_GOES_HERE'
-#   DATABASE_NAME: 'postgres'
-#   AUTH_DOMAIN: 'YOUR_AUTH0_DOMAIN'
-#   AUTH_CLIENT_ID: 'YOUR_AUTH0_CLIENT_ID'
-#   AUTH_CLIENT_SECRET: 'YOUR_AUTH0_CLIENT_SECRET'
-#   AUTH_ALGORITHMS: [ "RS256" ]
-#   AUTH_SCOPE: "read:users"
-#   API_CLIENT_ID: 'YOUR_AUTH0_API_CLIENT_ID'
-#   API_CLIENT_SECRET: 'YOUR_AUTH0_API_CLIENT_SECRET'
-#   API_AUDIENCE: 'YOUR_AUTH0_API_AUDIENCE'
-# ______________________________[End Sample]
-includes:
-  - env_variables.yaml
+# export DB_HOST='34.82.130.245', 
+# export DB_HOST='/cloudsql/mineral-catwalk-368610:us-west1:southacyril/'
+# export DB_PORT=5432, 
+# export DB_USER='postgres',
+# export DB_PASSWORD='qwert1234',
+# export DATABASE_NAME='postgres'
+
+env_variables:
+  PROJECT_ID: 'mineral-catwalk-368610'
+  DB_INSTANCE: 'mineral-catwalk-368610:us-west1:southacyril'
+  DB_HOST: '/cloudsql/mineral-catwalk-368610:us-west1:southacyril/'
+  DB_PORT: 5432
+  DB_USER: 'postgres'
+  DB_PASSWORD: 'qwert1234'
+  DATABASE_NAME: 'postgres'
+  AUTH_DOMAIN: 'winedatalake.us.auth0.com'
+  AUTH_ALGORITHMS: [ "RS256" ]
+  AUTH_CLIENT_ID: 'Nncz6b9skBCCAkyR4AFUyEdct3URx5Kd'
+  AUTH_CLIENT_SECRET: '7TuyECcDnsACqDk8E98AVF4PD4Pf9QJ4Bm6q5asgYKOd0FqR1C3t4xoSrwskc9ko'
+  AUTH_SCOPE: "read:users"
+  API_CLIENT_ID: 'pfwNa8Hsg9VuJnKCcmsoLFLgAzxQbCna'
+  API_CLIENT_SECRET: 'vLef_HeWyS9M__FOJULscmNI3hhBwJpX6NuZQadlqqngPGgfvLtIR_kk5hiMBSk-'
+  API_AUDIENCE: 'aF3LnZv!&W@CB*@JZhTR8k7ZPT3gBGqvNdGmyJLspA#9T6hLJx59&pvAZ6'
 
 handlers:
   # FRONTEND HANDLER
