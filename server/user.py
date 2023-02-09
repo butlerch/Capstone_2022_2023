@@ -4,9 +4,10 @@ import json
 from flask import jsonify, make_response
 from flask import Blueprint, request
 import psycopg2
-from server.verify_jwt import verify_jwt, AuthError
+from verify_jwt import verify_jwt, AuthError
 from dotenv import load_dotenv
 import os
+# import secrets
 
 # Load credentials from environmental variables
 load_dotenv()
@@ -22,8 +23,15 @@ db = psycopg2.connect(
     password=os.environ.get('DB_PASSWORD'),
     database=os.environ.get('DATABASE_NAME')
 )
-
+# db = psycopg2.connect(
+#     host='34.82.130.245',
+#     port=5432,
+#     user='postgres',
+#     password='qwert1234',
+#     database='postgres'
+# )
 cursor = db.cursor()
+print (cursor)
 
 
 # Description: Error Handler for Auth0/JWT Errors
@@ -173,3 +181,4 @@ def wines(bottle_id):
     res = make_response('Invalid Method', 405)
     res.headers['Content-Type'] = 'application/json'
     return res
+
