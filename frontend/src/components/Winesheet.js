@@ -18,11 +18,7 @@ import prevIcon from '../images/arrow_back.svg'
 import nextIcon from '../images/arrow_forward.svg'
 
 // Helper Functions
-import {
-    parseNeighbors,
-    parseTechnicalData,
-    parseOverview, parseFilePaths
-} from "../utils/parseData";
+import {parseFilePaths, parseNeighbors, parseOverview, parseTechnicalData} from "../utils/parseData";
 
 // Component Description: Displays a single winesheet.
 export default function Winesheet() {
@@ -184,10 +180,20 @@ export default function Winesheet() {
                                 </div>
                             </div>
                             {/* Download Button */}
-                            <div className="downloadButton">
-                                <a href={filePaths.file} className="primaryButton darkPurple big" download>Download
-                                    Techsheet</a>
+                            <div style={{display: "flex", flexDirection: "row"}}>
+                                <div className="downloadButton">
+                                    <a href={filePaths.file} className="primaryButton darkPurple big" download>Download
+                                        Techsheet</a>
+                                </div>
+                                {
+                                    isAuthenticated && <div className="downloadButton">
+                                        <a href={`/submit?bottle=${bottle_id}`} className="primaryButton darkPurple big">Edit
+                                            Information</a>
+                                    </div>
+                                }
+
                             </div>
+
                         </div>
                         {/* Navigation Arrow (Desktop) */}
                         <div className="navArrow">

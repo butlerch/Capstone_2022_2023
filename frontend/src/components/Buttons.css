@@ -28,7 +28,7 @@
 }
 
 /* Styling & Formatting for the Dark Buttons (ex: A Tag) */
-.primaryButtonContainer{
+.primaryButtonContainer {
     display: flex;
     flex-direction: row;
     flex-flow: wrap;

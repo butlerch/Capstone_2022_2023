@@ -78,7 +78,7 @@ export default function Results() {
                 searchString = searchString + "&" + keys[i] + "=" + searchCriteria[keys[i]];
             }
         }
-        console.log(`Searching for...${searchString}`)
+
         /* Perform a search; if successful, store the results for display. */
         try {
             const results = await axios.get(`${apiOrigin}${searchString}`);

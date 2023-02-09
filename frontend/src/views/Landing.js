@@ -3,9 +3,8 @@ import {getConfig} from "../config/config";
 import {useEffect, useState} from "react";
 
 // Routing & Paths
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import axios from "axios";
-import {useNavigate} from 'react-router-dom';
 
 // Style & Components
 import './Landing.css';
