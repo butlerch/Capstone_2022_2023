@@ -1,0 +1,57 @@
+runtime: python38
+
+# PRODUCTION SERVER ENTRYPOINT
+# This states the entrypoint for running the backend. First, it changes to the "server folder" and
+# then it uses gunicorn on Port#8080 (required port) to run api.py
+entrypoint: gunicorn -b :8080 --chdir ./server api:app
+
+# export DB_HOST='34.82.130.245', 
+# export DB_HOST='/cloudsql/mineral-catwalk-368610:us-west1:southacyril/'
+# export DB_PORT=5432, 
+# export DB_USER='postgres',
+# export DB_PASSWORD='qwert1234',
+# export DATABASE_NAME='postgres'
+
+env_variables:
+  PROJECT_ID: 'mineral-catwalk-368610'
+  DB_INSTANCE: 'mineral-catwalk-368610:us-west1:southacyril'
+  DB_HOST: '/cloudsql/mineral-catwalk-368610:us-west1:southacyril/'
+  DB_PORT: 5432
+  DB_USER: 'postgres'
+  DB_PASSWORD: 'qwert1234'
+  DATABASE_NAME: 'postgres'
+  AUTH_DOMAIN: 'winedatalake.us.auth0.com'
+  AUTH_ALGORITHMS: [ "RS256" ]
+  AUTH_CLIENT_ID: 'Nncz6b9skBCCAkyR4AFUyEdct3URx5Kd'
+  AUTH_CLIENT_SECRET: '7TuyECcDnsACqDk8E98AVF4PD4Pf9QJ4Bm6q5asgYKOd0FqR1C3t4xoSrwskc9ko'
+  AUTH_SCOPE: "read:users"
+  API_CLIENT_ID: 'pfwNa8Hsg9VuJnKCcmsoLFLgAzxQbCna'
+  API_CLIENT_SECRET: 'vLef_HeWyS9M__FOJULscmNI3hhBwJpX6NuZQadlqqngPGgfvLtIR_kk5hiMBSk-'
+  API_AUDIENCE: 'aF3LnZv!&W@CB*@JZhTR8k7ZPT3gBGqvNdGmyJLspA#9T6hLJx59&pvAZ6'
+
+handlers:
+  # FRONTEND HANDLER
+  # "url" is a regular expression; if the user types anything into the browser in the pattern {domain}/, this triggers.
+  # "static_files" tells it which files should be served when this regular expression is matched.
+  # "upload" tells gcloud which files to upload corresponding to static_files - in this case, it's the same.
+  # This directs {domain}/ to the following FILE (touches ONE FILE).
+  - url: /
+    static_files: frontend/build/index.html
+    upload: frontend/build/index.html
+
+  # "url" is the prefix "/" + any characters (.*) + "." (\.) + any characters (.*)
+  # This code instructs the application to substitute this prefix after "frontend/build/"
+  # Ex: Browser wants {domain}/css/main.css; the prefix is "/" + "css/main" (any characters) + "." + "css" (any characters)
+  # It will get the file found at frontend/build/{above prefix}
+  # "upload" tells gcloud what files to upload (so that we can exclude unnecessary files - specifically, it will upload
+  # the whole React build folder at "frontend/build".
+  - url: /(.*\..*)$
+    static_files: frontend/build/\1
+    upload: frontend/build/.*$
+
+    # BACKEND HANDLER
+    # Python routes have the following pattern {domain}/{entity}/<optional_id_number>
+    # React routes have the following pattern {domain}/{view}
+    # This code routes anything matching the Python pattern to the API.
+  - url: /.*
+    script: auto
