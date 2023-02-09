@@ -3,6 +3,7 @@
 import string
 import psycopg2
 from flask import Flask, jsonify, request, abort, Response, make_response
+from verify_jwt import verify_jwt, AuthError
 import re
 import user
 from authlib.integrations.flask_client import OAuth
@@ -43,6 +44,7 @@ db = psycopg2.connect(
     database=os.environ.get('DATABASE_NAME')
 )
 
+# For debugging Database connection issues
 # db = psycopg2.connect(
 #     host='34.82.130.245',
 #     port=5432,
