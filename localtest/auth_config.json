@@ -1,0 +1,8 @@
+{
+  "domain": "winedatalake.us.auth0.com",
+  "clientId": "Nncz6b9skBCCAkyR4AFUyEdct3URx5Kd",
+  "secret": "7TuyECcDnsACqDk8E98AVF4PD4Pf9QJ4Bm6q5asgYKOd0FqR1C3t4xoSrwskc9ko",
+  "audience": "aF3LnZv!&W@CB*@JZhTR8k7ZPT3gBGqvNdGmyJLspA#9T6hLJx59&pvAZ6",
+  "scope": "read:users",
+  "apiOrigin" : "http://127.0.0.1:8080/"
+}
