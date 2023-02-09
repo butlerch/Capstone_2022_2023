@@ -3,12 +3,14 @@
 import string
 import psycopg2
 from flask import Flask, jsonify, request, abort, Response, make_response
+from verify_jwt import verify_jwt, AuthError
 import re
 import user
 from authlib.integrations.flask_client import OAuth
 import os
 from dotenv import load_dotenv
 from flask_cors import CORS
+# import secrets
 
 # Load credentials from environmental variables
 load_dotenv()
@@ -21,25 +23,19 @@ CORS(app)
 
 # == Setup Auth0 ==
 oauth = OAuth(app)
-DOMAIN = os.environ.get('AUTH_DOMAIN')
-ALGORITHMS = os.environ.get('AUTH_ALGORITHMS')
-CLIENT_ID = os.environ.get('AUTH_CLIENT_ID')
-CLIENT_SECRET = os.environ.get('AUTH_CLIENT_SECRET')
-SCOPE = os.environ.get('AUTH_SCOPE')
-
 auth0 = oauth.register(
     'auth0',
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET,
-    api_base_url="https://" + DOMAIN,
-    access_token_url="https://" + DOMAIN + "/oauth/token",
-    authorize_url="https://" + DOMAIN + "/authorize",
+    client_id=os.environ.get('AUTH_CLIENT_ID'),
+    # client_secret=secrets.access_secret_version('AUTH_CLIENT_SECRET', 1),
+    api_base_url="https://" + os.environ.get('AUTH_DOMAIN'),
+    access_token_url="https://" + os.environ.get('AUTH_DOMAIN') + "/oauth/token",
+    authorize_url="https://" + os.environ.get('AUTH_DOMAIN') + "/authorize",
     client_kwargs={
         'scope': "openid profile email",
     },
 )
 
-# == Database Instance  ==
+#== Database Instance  ==
 db = psycopg2.connect(
     host=os.environ.get('DB_HOST'),
     port=os.environ.get('DB_PORT'),
@@ -48,6 +44,16 @@ db = psycopg2.connect(
     database=os.environ.get('DATABASE_NAME')
 )
 
+# For debugging Database connection issues
+# db = psycopg2.connect(
+#     host='34.82.130.245',
+#     port=5432,
+#     user='postgres',
+#     password='qwert1234',
+#     database='postgres'
+# )
+# if(db):
+#     print('db == ',)
 cursor = db.cursor()
 
 # Registers the route for the User Entity (located in user.py)
@@ -471,7 +477,7 @@ def custom_404(error):
 
 # driver function
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8080, debug=True)
     # app.run(host='localhost', port=8080)
 
 '''
