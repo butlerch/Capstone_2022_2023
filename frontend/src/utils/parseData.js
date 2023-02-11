@@ -123,6 +123,15 @@ export function parseTechnicalData(techsheetData) {
         technicalData.push({"property": "pH", "value": cleanString(techsheetData["ph"])})
     }
 
+    /* Parse pH, a string.*/
+    if (techsheetData["winery_name"] !== "NULL" && techsheetData["winery_name"] !== undefined) {
+        technicalData.push({
+            "property": "Winery",
+            "value": cleanString(techsheetData["winery_name"]),
+            "id": technicalData["winery_id"]
+        })
+    }
+
     /* Parse soils, a string array.*/
     /* Create a string based on the array contents.*/
     let soilsString = "";
