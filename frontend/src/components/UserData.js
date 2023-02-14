@@ -70,6 +70,20 @@ export default function UserData() {
                             don't have any favorite techsheets.</>}
                     </div>
                 </>}
+                {!userData ? <>Loading...</> : <>
+                    <div className="heading headingContainer extraCushion"><img className="sideSpace" src={favoriteIcon}
+                                                                                width="25px" height="25px"
+                                                                                alt="My Favorite Techsheets"/><b>My
+                        Favorite Wineries</b></div>
+                    <div className="primaryButtonContainer">
+                        {userData && userData["fav_wineries"] && userData["fav_wineries"].length > 0 ? userData["fav_wineries"].map((element) =>
+                            <>
+                                <button id={element} key={element} className="primaryButton narrow mediumPurple"
+                                        onClick={() => navigate('/results', {state: JSON.stringify({filters: {wineries: element["winery_name"]}})})}>{parseOverview(element).title !== undefined && parseOverview(element).title} {parseOverview(element).subtitle !== undefined && parseOverview(element).subtitle}</button>
+                            </>) : <>You
+                            don't have any favorite wineries.</>}
+                    </div>
+                </>}
             </blockquote>
         </div>
     </AccessoryPage>

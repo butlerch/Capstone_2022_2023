@@ -32,6 +32,7 @@ export default function Winesheet() {
     const {apiOrigin, audience, scope} = getConfig();
     const {isAuthenticated, getAccessTokenSilently} = useAuth0();
     const [heart, setHeart] = useState(null);
+    const [wineryHeart, setWineryHeart] = useState(null);
 
     async function toggleFavorites() {
         if (isAuthenticated) {
@@ -58,6 +59,39 @@ export default function Winesheet() {
                         }
                     });
                     setHeart(false);
+                    console.log(JSON.stringify(removeFavoriteResponse))
+                } catch (favError) {
+                    setError(favError)
+                }
+            }
+        }
+    }
+
+    async function toggleWineryFavorites(winery_name) {
+        if (isAuthenticated) {
+            if (wineryHeart === false) {
+                let token = await getAccessTokenSilently({audience, scope});
+                try {
+                    const addFavoriteResponse = await axios.post(`${apiOrigin}/user/favorites/wineries/${winery_name}`, {}, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        }
+                    });
+                    setWineryHeart(true);
+                    console.log(JSON.stringify(addFavoriteResponse))
+
+                } catch (favError) {
+                    setError(favError)
+                }
+            } else {
+                let token = await getAccessTokenSilently({audience, scope});
+                try {
+                    const removeFavoriteResponse = await axios.delete(`${apiOrigin}/user/favorites/wineries/${winery_name}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        }
+                    });
+                    setWineryHeart(false);
                     console.log(JSON.stringify(removeFavoriteResponse))
                 } catch (favError) {
                     setError(favError)
@@ -137,11 +171,34 @@ export default function Winesheet() {
 
                             {/* Technical Data Grid */}
                             <div className="technicalDataGrid">
-                                {technicalData.map((element) => <div className="technicalDataGridItem"
-                                                                     key={element.property}>
-                                    <span className="technicalDataGridProperty">{element.property}</span>
-                                    <span className="technicalDataGridValue">{element.value}</span>
-                                </div>)}
+                                {technicalData.map((element) => (
+                                    <div className="technicalDataGridItem" key={element.property}>
+                                        <span className="technicalDataGridProperty">{element.property}</span>
+                                        <span>
+                                        <span className="technicalDataGridValue">{element.value}</span>
+                                            {isAuthenticated && element.property === "Winery" && <>
+                                                {wineryHeart ? <img src={heartIcon} style={{
+                                                        display: 'inline',
+                                                        cursor: "pointer",
+                                                        marginLeft: "3px",
+                                                        transform: 'translateY(25%)'
+                                                    }}
+                                                              height="25px" width="25px"
+                                                              alt="(SVGREPO CC0 License) Favorite a Wine"
+                                                              onClick={() => toggleWineryFavorites(element.value)}/> :
+                                                    <img src={emptyHeartIcon} style={{
+                                                        display: 'inline',
+                                                        cursor: "pointer",
+                                                        marginLeft: "3px",
+                                                        transform: 'translateY(25%)'
+                                                    }}
+                                                         height="25px" width="25px"
+                                                         alt="(SVGREPO CC0 License) Unfavorite a Wine"
+                                                         onClick={() => toggleWineryFavorites(element.value)}/>}
+                                            </>
+                                            }
+                                        </span>
+                                    </div>))}
                             </div>
                         </div>
 
