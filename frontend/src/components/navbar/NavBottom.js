@@ -11,7 +11,7 @@ import {useAuth0} from "@auth0/auth0-react";
 
 // Component Description: The bottom-most/footer navigation bar.
 function NavBottom() {
-    const {loginWithRedirect, isAuthenticated, logout, user} = useAuth0();
+    const {isAuthenticated} = useAuth0();
 
     return <div className="navBottomBar">
         <div className="bottomBarElements">
