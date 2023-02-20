@@ -40,7 +40,7 @@ export function parseFilePaths(techsheetData, fileDirectory = "/pdfs/", fileForm
     overview.thumbnail = thumbnailDirectory + overview.filename + thumbnailFormat;
 
     /* Builds an internal URL path to the techsheet. */
-    if(techsheetData && techsheetData["bottle_id"]){
+    if (techsheetData && techsheetData["bottle_id"]) {
         overview.clientURL = "/winesheets/" + techsheetData["bottle_id"];
     }
 
@@ -121,6 +121,15 @@ export function parseTechnicalData(techsheetData) {
     /* Parse pH, a string.*/
     if (techsheetData["ph"] !== "NULL" && techsheetData["ph"] !== undefined) {
         technicalData.push({"property": "pH", "value": cleanString(techsheetData["ph"])})
+    }
+
+    /* Parse pH, a string.*/
+    if (techsheetData["winery_name"] !== "NULL" && techsheetData["winery_name"] !== undefined) {
+        technicalData.push({
+            "property": "Winery",
+            "value": cleanString(techsheetData["winery_name"]),
+            "id": technicalData["winery_id"]
+        })
     }
 
     /* Parse soils, a string array.*/
@@ -215,8 +224,9 @@ function cleanString(string, numbers = true) {
 }
 
 /* Function Description: Remove any accented characters from a string (ex: "Crème Brulée" becomes "Creme Brulee").*/
+
 /* Filnames containing non-ASCII characters (ex: files with è in them) cannot be stored in many cloud systems.*/
-function encodeFileName(string="Crème Brulée"){
+function encodeFileName(string = "Crème Brulée") {
     /* Remove any unicode characters in the source filename (ex: accented files) and replace
     /* them with an unaccented letter. */
     /* Return the string encoded as a URL.*/
