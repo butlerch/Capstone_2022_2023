@@ -142,6 +142,9 @@ def search():
     if bottle_id or winery_name or soils or year or varietals or keywords:
         params_exist = True
 
+    if keywords[0] == 'undefined':
+        keywords[0] = ''
+
     query_string = "SELECT * FROM bottle_data"
 
     if params_exist:
@@ -164,16 +167,6 @@ def search():
     num_quals, substring = search_endpoint_query_builder(
         "year = '{}'", year, num_quals)
     query_string += substring
-
-    '''
-    This if statement is to account for the fact that "Pinot Gouges" only 
-    appears once in the database, and with an extraneous left double quote. 
-    This should no longer be necessary after data cleanup is done.
-    '''
-    if "Pinot Gouges" in varietals:
-        for i in range(0, len(varietals)):
-            if varietals[i] == "Pinot Gouges":
-                varietals[i] = "Pinot “Gouges"
 
     num_quals, substring = search_endpoint_query_builder(
         "(varietals ILIKE '%{}%' OR wine_name ILIKE '%{}%')",
