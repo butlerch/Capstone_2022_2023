@@ -17,8 +17,10 @@ import Profile from "./views/Profile";
 import About from "./views/About";
 import Contact from "./views/Contact";
 import Developer from "./views/Developer";
+import How from "./views/How";
 import Winesheets from "./views/Winesheets";
 import Winesheet from "./components/Winesheet";
+import WinesheetDetail from "./components/WinesheetDetail";
 
 // Styling & Components
 import './index.css';
@@ -61,9 +63,13 @@ root.render(<Auth0Provider {...providerConfig}>
                     <Route path="about" element={<About/>}/>
                     <Route path="contact" element={<Contact/>}/>
                     <Route path="developer" element={<Developer/>}/>
+                    <Route path="Howtousethissite" element={<How/>}/>
                     <Route path="submit" element={<Submit/>}/>
                     <Route path="winesheets" element={<Winesheets/>}>
                         <Route path=":winesheetId" element={<Winesheet/>}/>
+                    </Route>
+                    <Route path="winesheetDetail" element={<WinesheetDetail />}>
+                        <Route path=":winesheetDetailId" element={<WinesheetDetail />} />
                     </Route>
                 </Route>
             </Routes>
