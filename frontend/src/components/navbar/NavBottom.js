@@ -25,6 +25,8 @@ function NavBottom() {
             <Link to="/contact" className="bottomBarText">Contact</Link>
             <span className="seperator">|</span>
             <Link to="/developer" className="bottomBarText">Developer</Link>
+            <span className="seperator">|</span>
+            <Link to="/howtousethissite" className="bottomBarText">How to Use This Site</Link>
         </div>
     </div>
 }
