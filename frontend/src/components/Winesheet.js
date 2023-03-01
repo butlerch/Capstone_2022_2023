@@ -4,7 +4,7 @@ import {getConfig} from "../config/config";
 import {useEffect, useState} from "react";
 
 // Routing & Paths
-import {Link, useParams} from "react-router-dom";
+import {Link, useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 // Style & Components
@@ -33,6 +33,8 @@ export default function Winesheet() {
     const {isAuthenticated, getAccessTokenSilently} = useAuth0();
     const [heart, setHeart] = useState(null);
     const [wineryHeart, setWineryHeart] = useState(null);
+    const navigate = useNavigate();
+
 
     async function toggleFavorites() {
         if (isAuthenticated) {
@@ -152,6 +154,10 @@ export default function Winesheet() {
         console.log(error.message)
     }
 
+  const toDetail = () => {
+    navigate("/winesheetDetail/" + bottle_id);
+  };
+  
     return <div className="winesheetPageContainer">
         <div className="winesheetPageCard">
             {overview && filePaths && technicalData && neighbors ? <>
@@ -163,11 +169,18 @@ export default function Winesheet() {
                                 src={prevIcon} alt="Navigate to Previous Winesheet"/></Link>
                         </div>
 
-                        {/* Title & Subtitle */}
-                        <div className="technicalData">
-                            <div className="technicalDataHeader">
-                                <span className="title">{overview.title}</span>
-                                <span className="subtitle">{overview.subtitle}</span></div>
+              {/* Title & Subtitle */}
+              <div className="technicalData">
+                <div className="technicalDataHeader">
+                  <span className="title">{overview.title}</span>
+                  <div
+                    className="primaryButton myprimaryButton"
+                    onClick={() => toDetail()}
+                  >
+                    Visit winery
+                  </div>
+                  <span className="subtitle">{overview.subtitle}</span>
+                </div>
 
                             {/* Technical Data Grid */}
                             <div className="technicalDataGrid">
