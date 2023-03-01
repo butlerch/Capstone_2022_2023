@@ -3,6 +3,7 @@ import {useAuth0} from "@auth0/auth0-react";
 
 // Routing & Paths
 import {Navigate} from "react-router-dom";
+import Tabs from "../components/Tabs";
 
 // Style & Components
 import UserData from "../components/UserData";
@@ -12,6 +13,6 @@ import UserData from "../components/UserData";
 export default function Profile() {
     const {isAuthenticated} = useAuth0();
     return <>
-        {isAuthenticated ? <UserData/> : <Navigate to="/"/>}
+        {isAuthenticated ? <Tabs/> : <Navigate to="/"/>}
     </>
 }
