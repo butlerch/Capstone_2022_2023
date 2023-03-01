@@ -6,17 +6,17 @@
 
 // Style & Components
 import AccessoryPage from "../components/AccessoryPage";
-import Lorem from "../test/Lorem";
+import EditAbout from "../test/EditAbout";
 
 
-// Component Description: The "About" page.
+// Component Description: The "Contact" page.
 export default function About() {
-    let title = "Our Company";
-    let subtitle = "ABOUT US";
+    let title = "Stay in Touch";
+    let subtitle = "About";
 
     return <>
         <AccessoryPage title={title} subtitle={subtitle}>
-            <Lorem/>
+            <EditAbout/>
         </AccessoryPage>
     </>
 }
