@@ -79,7 +79,8 @@ export default function UserData() {
                         {userData && userData["fav_wineries"] && userData["fav_wineries"].length > 0 ? userData["fav_wineries"].map((element) =>
                             <>
                                 <button id={element} key={element} className="primaryButton narrow mediumPurple"
-                                        onClick={() => navigate('/results', {state: JSON.stringify({filters: {wineries: element["winery_name"]}})})}>{parseOverview(element).title !== undefined && parseOverview(element).title} {parseOverview(element).subtitle !== undefined && parseOverview(element).subtitle}</button>
+                                        // Will need to change navigate to the winery page once we have those coded
+                                        onClick={() => navigate('/')}>{element["winery_name"]}</button>
                             </>) : <>You
                             don't have any favorite wineries.</>}
                     </div>

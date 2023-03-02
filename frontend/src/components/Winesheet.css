@@ -10,6 +10,14 @@
     width: 100%;
 }
 
+.myprimaryButton{
+    margin: 5px 0;
+    color: #c7d3e8;
+    border: 1px solid #424ca2;
+    background-color: #776dbe;
+    padding: 5px 20px;
+    border-radius: 50px;
+}
 /* Card Styling and Positioning (DESKTOP) */
 @media (min-width: 769px) {
     .winesheetPageCard {

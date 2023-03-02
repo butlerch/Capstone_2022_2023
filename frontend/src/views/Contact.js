@@ -6,7 +6,7 @@
 
 // Style & Components
 import AccessoryPage from "../components/AccessoryPage";
-import Lorem from "../test/Lorem";
+import EditContact from "../test/EditContact";
 
 
 // Component Description: The "Contact" page.
@@ -16,7 +16,7 @@ export default function Contact() {
 
     return <>
         <AccessoryPage title={title} subtitle={subtitle}>
-            <Lorem/>
+            <EditContact/>
         </AccessoryPage>
     </>
 }

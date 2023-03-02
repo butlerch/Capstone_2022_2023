@@ -68,7 +68,6 @@ def make_returnable_bottle(bottle_id):
         return {"error": "error"}
     query_results = query_results[0]
     colnames = [desc[0] for desc in cursor.description]
-
     returnable = {}
     i = 0
     for colname in colnames:
@@ -150,7 +149,7 @@ def wines(bottle_id):
         res.headers['Content-Type'] = 'application/json'
         return res
 
-    # Adds a favorite wine to the user's list of favorites.
+    # Deletes a favorite wine from the user's list of favorites.
     if request.method == 'DELETE':
 
         target_techsheet = make_returnable_bottle(bottle_id)
@@ -163,6 +162,75 @@ def wines(bottle_id):
 
         # Update the user entity with the new list.
         cursor.execute(cursor.mogrify("UPDATE users SET fav_techsheets = %s WHERE user_auth = %s",
+                                      (json.dumps(updated_list), user_auth)))
+
+        db.commit()
+        res = make_response('Removed Favorite', 201)
+        res.headers['Content-Type'] = 'application/json'
+        return res
+
+    res = make_response('Invalid Method', 405)
+    res.headers['Content-Type'] = 'application/json'
+    return res
+
+@bp.route('/favorites/wineries/<winery_name>', methods=['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])
+def winery(winery_name):
+    # Verifies the JWT, pulls the user_auth id from the token, and retrieves the user.
+    payload = verify_jwt(request)
+    user_auth = payload["sub"]
+    user_data = retrieve_user(user_auth)
+
+
+    # Given a user and a winery name, return whether-or-not that user has marked that winery as a favorite.
+    if request.method == 'GET':
+        # Search for the winery and, if found, return 204.
+        print("Data: " + str(user_data))
+        for winery in user_data["fav_wineries"]:
+            if winery == winery_name:
+                res = make_response('', 204)
+                res.headers['Content-Type'] = 'application/json'
+                return res
+
+        # If the winery isn't a favorite, return 404.
+        res = make_response('Favorite Not Found', 404)
+        res.headers['Content-Type'] = 'application/json'
+        return res
+
+    # Adds a favorite wine to the user's list of favorites.
+    if request.method == 'POST':
+        winery_list = {"winery_name": winery_name}
+
+        # Is the bottle being added already one of the user's favorites?
+        for winery in user_data["fav_wineries"]:
+            if winery["winery_name"] == winery_name:
+                res = make_response('', 204)
+                res.headers['Content-Type'] = 'application/json'
+                return res
+
+        # If not already in the list, add the target winery to the user's list of favorite wineries.
+        user_data["fav_wineries"].append(winery_list)
+        updated_list = json.dumps(user_data["fav_wineries"], default = str)
+
+        # Update the user entity.
+        cursor.execute(cursor.mogrify("UPDATE users SET fav_wineries = %s WHERE user_auth = %s",
+                                      (updated_list, user_auth)))
+
+        db.commit()
+        res = make_response('Added Favorite', 201)
+        res.headers['Content-Type'] = 'application/json'
+        return res
+
+    # Deletes a current favorited winery from the user's list of favorite wineries.
+    if request.method == 'DELETE':
+
+        # Create a list that excludes the bottle to be removed.
+        updated_list = []
+        for winery in user_data["fav_wineries"]:
+            if winery["winery_name"] != winery_name:
+                updated_list.append(winery)
+
+        # Update the user entity with the new list.
+        cursor.execute(cursor.mogrify("UPDATE users SET fav_wineries = %s WHERE user_auth = %s",
                                       (json.dumps(updated_list), user_auth)))
 
         db.commit()
