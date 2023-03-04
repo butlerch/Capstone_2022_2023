@@ -60,7 +60,7 @@ export default function Submit() {
                         marginBottom: '1rem'
                     }}>
                         <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset'}}>
-                            {element.split('_').map(str => <span
+                            {element.split('_').map(str => <span key={str}
                                 style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
                         </span>
                         <input style={{maxWidth: 500}} className="technicalFormInput" value={technicalForm[element]}

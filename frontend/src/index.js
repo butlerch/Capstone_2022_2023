@@ -21,6 +21,7 @@ import How from "./views/How";
 import Winesheets from "./views/Winesheets";
 import Winesheet from "./components/Winesheet";
 import WinesheetDetail from "./components/WinesheetDetail";
+import Admin from "./views/Admin";
 
 // Styling & Components
 import './index.css';
@@ -30,6 +31,8 @@ import App from './App';
 import reportWebVitals from './test/reportWebVitals';
 import Results from "./views/Results";
 import Submit from "./views/Submit";
+import Bottle from "./views/Admin/Bottle";
+import Winery from "./views/Admin/Winery";
 
 
 // Auth0 Configuration
@@ -65,6 +68,9 @@ root.render(<Auth0Provider {...providerConfig}>
                     <Route path="developer" element={<Developer/>}/>
                     <Route path="Howtousethissite" element={<How/>}/>
                     <Route path="submit" element={<Submit/>}/>
+                    <Route path="admin" element={<Admin/>} />
+                    <Route path="/admin/bottle" element={<Bottle/>}  />
+                    <Route path="/admin/winery" element={<Winery/>} />
                     <Route path="winesheets" element={<Winesheets/>}>
                         <Route path=":winesheetId" element={<Winesheet/>}/>
                     </Route>

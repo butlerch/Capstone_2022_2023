@@ -79,7 +79,7 @@ export default function UserData() {
                         {userData && userData["fav_wineries"] && userData["fav_wineries"].length > 0 ? userData["fav_wineries"].map((element) =>
                             <>
                                 <button id={element} key={element} className="primaryButton narrow mediumPurple"
-                                        // Will need to change navigate to the winery page once we have those coded
+                                    // Will need to change navigate to the winery page once we have those coded
                                         onClick={() => navigate('/')}>{element["winery_name"]}</button>
                             </>) : <>You
                             don't have any favorite wineries.</>}

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Dialog, TextField, Button, Snackbar, Alert } from "@mui/material";
 import "./Tabs.css";
 import UserData from "./UserData";
-import axios from "axios";
 export default function Tabs() {
   const [type, setType] = useState(0);
   const [open, setOpen] = React.useState(false);
