@@ -1,12 +1,16 @@
 import {useAuth0} from "@auth0/auth0-react";
 import {useSearchParams} from "react-router-dom";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {getConfig} from "../../config/config";
+import axios from "axios";
 
 const Winery = () => {
     const {isAuthenticated} = useAuth0();
     const [searchParams] = useSearchParams();
-    const type = searchParams.get('type')
+    const type = searchParams.get('type');
+    const [filters, setFilters] = useState({});
+    const [error, setError] = useState('');
+    const [wineryName, setWineryName] = useState('');
 
     const [technicalForm, setTechnicalForm] = useState({
         "winery_name": "",
@@ -17,10 +21,44 @@ const Winery = () => {
         "winery_bio": ""
     })
 
-    if (!isAuthenticated) return (<div>No access</div>)
 
 
     const {apiOrigin} = getConfig();
+
+    /* Fetch options to populate the dropdown menu under "Advanced Search." */
+    async function fetchFilters() {
+        let formattedFilters = {};
+
+        /* Build the "Years" dropdown menu. */
+        let currentYear = new Date().getFullYear()
+        formattedFilters.years = [];
+        for (let i = 2015; i <= currentYear; i++) {
+            formattedFilters.years.push(i);
+        }
+
+        try {
+            /* Fetch "Wineries" */
+            let res1 = await axios(`${apiOrigin}/listOfWineries`);
+            formattedFilters.wineries = res1.data.wineries;
+            try {
+                /* Fetch varietals. */
+                let res2 = await axios(`${apiOrigin}/varietalNames`);
+                formattedFilters.varietals = res2.data.varietals;
+                setFilters(formattedFilters);
+            } catch (err) {
+                /* Display the error. */
+                setError("Error loading dropdown menu options. Please refresh.");
+            }
+
+        } catch (err) {
+            /* Display the error. */
+            setError("Error loading dropdown menu options. Please refresh.");
+        }
+    }
+
+    useEffect(() => {
+        fetchFilters();
+    }, [])
 
 
     // useEffect(() => {
@@ -36,6 +74,9 @@ const Winery = () => {
     const submit = () => {
 
     }
+
+    if (!isAuthenticated) return (<div>No access</div>)
+
     return <div className="winesheetPageContainer">
         <div className="winesheetPageCard">
             <div className="technicalData" style={{margin: '0 auto'}}>
@@ -44,6 +85,26 @@ const Winery = () => {
                     {/*<span className="subtitle">this is an apply and we will verify it.</span>*/}
                 </div>
                 <div style={{minWidth: 800}}>
+                    {type === 'edit' && <div className="technicalDataGridItem" style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: "space-between",
+                        marginBottom: '1rem'
+                    }}>
+                        <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset',transform: 'translateY(10px)'}}>
+                            { "winery_name".split('_').map(str => <span key={str}
+                                                                        style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
+                        </span>
+                        <div className="selectContainer" alt="Select a Winery">
+                            <select className="selectDropdown technicalFormInput" name="wine" value={wineryName}
+                                    style={{width: '34.8rem', height: '2rem', marginLeft: '7.6rem'}}
+                                    onChange={x => setWineryName(x.target.value)}>
+                                <option value="">- Select -</option>
+                                {filters && filters["wineries"]?.map((element) => <option key={element}
+                                                                                          value={element}>{element}</option>)}
+                            </select>
+                        </div>
+                    </div>}
                     {Object.keys(technicalForm).map((element) => <div className="technicalDataGridItem"
                                                                       key={element} style={{
                         display: 'flex',
