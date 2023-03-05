@@ -4,7 +4,7 @@ import {getConfig} from "../config/config";
 import {useEffect, useState} from "react";
 
 // Routing & Paths
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 // Style & Components
@@ -112,7 +112,7 @@ export default function Winesheet() {
                 setFilePaths(parseFilePaths(res.data));
                 setTechnicalData(parseTechnicalData(res.data));
                 setNeighbors(parseNeighbors(res.data));
-
+                console.log(res)
                 if (isAuthenticated) {
                     /* Get JWT from Auth0 (ACCESS TOKEN) */
                     let token = await getAccessTokenSilently({audience, scope});
@@ -154,10 +154,13 @@ export default function Winesheet() {
         console.log(error.message)
     }
 
-    const toDetail = () => {
-        navigate("/winesheetDetail/" + bottle_id);
-    };
-
+  const toDetail = () => {
+    console.log('filepath',filePaths);
+    let data = {...filePaths,...overview};
+    localStorage.setItem('desc',JSON.stringify(data));
+    navigate("/winesheetDetail/" + bottle_id);
+  };
+  
     return <div className="winesheetPageContainer">
         <div className="winesheetPageCard">
             {overview && filePaths && technicalData && neighbors ? <>
@@ -169,18 +172,18 @@ export default function Winesheet() {
                                 src={prevIcon} alt="Navigate to Previous Winesheet"/></Link>
                         </div>
 
-                        {/* Title & Subtitle */}
-                        <div className="technicalData">
-                            <div className="technicalDataHeader">
-                                <span className="title">{overview.title}</span>
-                                <div
-                                    className="primaryButton myprimaryButton"
-                                    onClick={() => toDetail()}
-                                >
-                                    Visit winery
-                                </div>
-                                <span className="subtitle">{overview.subtitle}</span>
-                            </div>
+              {/* Title & Subtitle */}
+              <div className="technicalData">
+                <div className="technicalDataHeader">
+                  <span className="title">{overview.title}</span>
+                  <div
+                    className="primaryButton myprimaryButton"
+                    onClick={() => toDetail()}
+                  >
+                    Visit winery
+                  </div>
+                  <span className="subtitle">{overview.subtitle}</span>
+                </div>
 
                             {/* Technical Data Grid */}
                             <div className="technicalDataGrid">
@@ -196,9 +199,9 @@ export default function Winesheet() {
                                                         marginLeft: "3px",
                                                         transform: 'translateY(25%)'
                                                     }}
-                                                                    height="25px" width="25px"
-                                                                    alt="(SVGREPO CC0 License) Favorite a Wine"
-                                                                    onClick={() => toggleWineryFavorites(element.value)}/> :
+                                                              height="25px" width="25px"
+                                                              alt="(SVGREPO CC0 License) Favorite a Wine"
+                                                              onClick={() => toggleWineryFavorites(element.value)}/> :
                                                     <img src={emptyHeartIcon} style={{
                                                         display: 'inline',
                                                         cursor: "pointer",
