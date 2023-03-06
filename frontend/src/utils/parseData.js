@@ -27,9 +27,14 @@ export function parseFilePaths(techsheetData, fileDirectory = "/pdfs/", fileForm
 
     let overview = {};
 
-    /* If necessary, strips a faulty extension from the source file. */
+    /* If necessary, strips a faulty json extension from the source file. */
     if (techsheetData["source_file"].substring(techsheetData["source_file"].length - 5) === ".json") {
         overview.filename = techsheetData["source_file"].substring(0, techsheetData["source_file"].length - 5);
+    }
+
+    /* For ease of execution, strips pdf file handler from source file. */
+    if (techsheetData["source_file"].substring(techsheetData["source_file"].length - 4) === ".pdf") {
+        overview.filename = techsheetData["source_file"].substring(0, techsheetData["source_file"].length - 4);
     }
 
     /* Encode the filename.*/
