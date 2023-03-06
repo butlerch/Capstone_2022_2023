@@ -6,7 +6,7 @@
 
 // Style & Components
 import AccessoryPage from "../components/AccessoryPage";
-import EditHow from "../test/EditHow";
+import EditHow from "../components/EditHow";
 
 
 // Component Description: The "How to use this site" page.

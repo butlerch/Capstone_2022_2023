@@ -6,7 +6,7 @@
 
 // Style & Components
 import AccessoryPage from "../components/AccessoryPage";
-import EditDeveloper from "../test/EditDeveloper";
+import EditDeveloper from "../components/EditDeveloper";
 
 
 // Component Description: The "Developer" page.

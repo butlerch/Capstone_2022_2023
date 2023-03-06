@@ -6,7 +6,7 @@
 
 // Style & Components
 import AccessoryPage from "../components/AccessoryPage";
-import EditAbout from "../test/EditAbout";
+import EditAbout from "../components/EditAbout";
 
 
 // Component Description: The "Contact" page.
