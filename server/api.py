@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request, abort, Response, make_response
 from verify_jwt import verify_jwt, AuthError
 import re
 import user
+import admin_api
 from authlib.integrations.flask_client import OAuth
 import os
 from dotenv import load_dotenv
@@ -44,20 +45,11 @@ db = psycopg2.connect(
     database=os.environ.get('DATABASE_NAME')
 )
 
-# For debugging Database connection issues
-# db = psycopg2.connect(
-#     host='34.82.130.245',
-#     port=5432,
-#     user='postgres',
-#     password='qwert1234',
-#     database='postgres'
-# )
-# if(db):
-#     print('db == ',)
 cursor = db.cursor()
 
 # Registers the route for the User Entity (located in user.py)
 app.register_blueprint(user.bp)
+app.register_blueprint(admin_api.bp)
 
 
 def make_a_returnable_single(query_results, colnames, num_bottles):
