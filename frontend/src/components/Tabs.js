@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {Alert, Button, Dialog, Snackbar, TextField} from "@mui/material";
+import {  useNavigate } from "react-router-dom";
 import "./Tabs.css";
 import UserData from "./UserData";
 
@@ -13,6 +14,10 @@ export default function Tabs() {
     const [msg, setMsg] = useState("");
     const [timer, setTimer] = useState("");
     const [isLogin, setIsLogin] = useState(localStorage.getItem("login"));
+    const navigate = useNavigate();
+    const toDashed = () => {
+    navigate("/dashboard")
+    }
     const changeType = (value) => {
         setType(value);
     };
@@ -78,7 +83,7 @@ export default function Tabs() {
                 <div className="nav">
                     <div
                         className={type === 0 ? "nav_active nav_item" : "nav_item"}
-                        onClick={() => changeType(0)}
+                        onClick={() => toDashed()}
                     >
                         Dashboard
                     </div>
