@@ -11,6 +11,9 @@ const Bottle = () => {
     const [wineryName, setWineryName] = useState('');
     const [filters, setFilters] = useState({});
     const [error, setError] = useState('');
+    const {apiOrigin} = getConfig();
+    const {add_wine, setAdd_wine} = useState('');
+    var json_file = [];
 
     const [technicalForm, setTechnicalForm] = useState({
         "winery_name": "",
@@ -32,26 +35,12 @@ const Bottle = () => {
     async function fetchFilters() {
         let formattedFilters = {};
 
-        /* Build the "Years" dropdown menu. */
-        let currentYear = new Date().getFullYear()
-        formattedFilters.years = [];
-        for (let i = 2015; i <= currentYear; i++) {
-            formattedFilters.years.push(i);
-        }
-
         try {
+
             /* Fetch "Wineries" */
             let res1 = await axios(`${apiOrigin}/listOfWineries`);
             formattedFilters.wineries = res1.data.wineries;
-            try {
-                /* Fetch varietals. */
-                let res2 = await axios(`${apiOrigin}/varietalNames`);
-                formattedFilters.varietals = res2.data.varietals;
-                setFilters(formattedFilters);
-            } catch (err) {
-                /* Display the error. */
-                setError("Error loading dropdown menu options. Please refresh.");
-            }
+            setFilters(formattedFilters);
 
         } catch (err) {
             /* Display the error. */
@@ -63,25 +52,43 @@ const Bottle = () => {
         fetchFilters();
     }, [])
 
+
     if (!isAuthenticated) return (<div>No access</div>)
 
+    async function submit_wine() {
+        if (type === 'add'){
+            let formData = new FormData();
+            const selectedFile = document.getElementById('upload').files[0];
+            formData.append("file", selectedFile);
+            /*for (let key in technicalForm){
+                Array.isArray(technicalForm[key])
+                ? technicalForm[key].foreach(value => formData.append(key + '[]', value))
+                : formData.append(key, technicalForm[key])
+            }*/
+            formData.append("technicalForm", JSON.stringify(technicalForm));
+            try {
+                /* Perform a search; if successful, pass state & navigate to the "Search Results" page. */
+                const results = await axios.post(`${apiOrigin}/admin/add_wine`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                });
+            } catch (err) {
+                if (err.response.status === 404) {
+                    setError("Unfortunately, nothing matches those search criteria...");
+                } else {
+                    /* If the response status code isn't 200 or 404, store the status code and error message. */
+                    setError("Status Code " + err.response.status + ": " + err.message + "!");
+                }
+            }} else {
 
-    const {apiOrigin} = getConfig();
+            }
+    }
 
-
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const res = await axios.get(`${apiOrigin}/techsheets/${bottle_id}`);
-    //         setTechnicalForm(res.data)
-    //
-    //     }
-    //
-    //     fetchData()
-    // }, [apiOrigin, bottle_id])
-
-    const submit = () => {
+    async function delete_wine() {
 
     }
+
     return <div className="winesheetPageContainer">
         <div className="winesheetPageCard">
             <div className="technicalData" style={{margin: '0 auto'}}>
@@ -160,11 +167,11 @@ const Bottle = () => {
                 </div>
                 <div style={{display: "flex", textAlign: 'center', margin: '0 auto'}}>
                     <div className="downloadButton">
-                        <div className="primaryButton darkPurple big" onClick={submit}>Submit
+                        <div className="primaryButton darkPurple big" onClick={submit_wine}>Submit
                         </div>
                     </div>
                     {type === 'edit' && <div className="downloadButton">
-                        <div className="primaryButton darkPurple big" onClick={submit}>Delete</div>
+                        <div className="primaryButton darkPurple big" onClick={delete_wine}>Delete</div>
                     </div>}
                 </div>
             </div>
