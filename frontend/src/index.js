@@ -22,6 +22,7 @@ import Winesheets from "./views/Winesheets";
 import Winesheet from "./components/Winesheet";
 import WinesheetDetail from "./components/WinesheetDetail";
 import Admin from "./views/Admin";
+import Dashboard from "./components/Dashboard";
 
 // Styling & Components
 import './index.css';
@@ -66,6 +67,7 @@ root.render(<Auth0Provider {...providerConfig}>
                     <Route path="about" element={<About/>}/>
                     <Route path="contact" element={<Contact/>}/>
                     <Route path="developer" element={<Developer/>}/>
+                     <Route path="dashboard" element={<Dashboard></Dashboard>} />
                     <Route path="Howtousethissite" element={<How/>}/>
                     <Route path="submit" element={<Submit/>}/>
                     <Route path="admin" element={<Admin/>} />
