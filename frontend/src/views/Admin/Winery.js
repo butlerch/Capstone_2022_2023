@@ -98,8 +98,7 @@ const Winery = () => {
                 </div>
                 <div style={{minWidth: 800}}>
                     <form onSubmit={handleSubmit(submit)}>
-
-                        {type === 'edit' && <div className="technicalDataGridItem" style={{
+                        {type === 'edit' && <><div className="technicalDataGridItem" style={{
                             display: 'flex',
                             flexDirection: 'row',
                             justifyContent: "space-between",
@@ -111,15 +110,21 @@ const Winery = () => {
                                                                        style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
                         </span>
                             <div className="selectContainer" alt="Select a Winery">
-                                <select className="selectDropdown technicalFormInput" name="wine" value={wineryName}
+                                <select className="selectDropdown technicalFormInput" name="wine"
+                                        {...register('winery_name', {required: true})}
                                         style={{width: '34.8rem', height: '2rem', marginLeft: '7.6rem'}}
-                                        onChange={x => setWineryName(x.target.value)}>
+                                >
                                     <option value="">- Select -</option>
                                     {filters && filters["wineries"]?.map((element) => <option key={element}
                                                                                               value={element}>{element}</option>)}
                                 </select>
                             </div>
-                        </div>}
+
+                        </div>
+                            <div>{errors['winery_name']?.type === 'required' &&
+                                <div style={{color: 'red', marginLeft: '80%', marginBottom: '1rem'}}>This field is
+                                    required</div>}</div>
+                        </>}
                         {Object.keys(technicalForm).map((element) => <>
                             <div className="technicalDataGridItem"
                                  key={element} style={{
