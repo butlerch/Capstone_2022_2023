@@ -3,6 +3,7 @@ import {useSearchParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getConfig} from "../../config/config";
 import axios from "axios";
+import {useForm} from "react-hook-form";
 
 const Winery = () => {
     const {isAuthenticated} = useAuth0();
@@ -11,6 +12,8 @@ const Winery = () => {
     const [filters, setFilters] = useState({});
     const [error, setError] = useState('');
     const [wineryName, setWineryName] = useState('');
+    const {register, formState: {errors}, handleSubmit, reset} = useForm();
+
 
     const [technicalForm, setTechnicalForm] = useState({
         "winery_name": "",
@@ -21,6 +24,14 @@ const Winery = () => {
         "winery_bio": ""
     })
 
+    const types = {
+        "winery_name": "text",
+        "winemaker": "text",
+        "address": "text",
+        "phone_number": "number",
+        "winery_website": "text",
+        "winery_bio": "text"
+    }
 
 
     const {apiOrigin} = getConfig();
@@ -72,7 +83,8 @@ const Winery = () => {
     // }, [apiOrigin, bottle_id])
 
     const submit = () => {
-
+        alert('submit')
+        reset()
     }
 
     if (!isAuthenticated) return (<div>No access</div>)
@@ -82,99 +94,96 @@ const Winery = () => {
             <div className="technicalData" style={{margin: '0 auto'}}>
                 <div className="technicalDataHeader">
                     <span className="title">{type === 'add' ? 'Adding New Wine' : 'Edit Wine'}</span>
-                    {/*<span className="subtitle">this is an apply and we will verify it.</span>*/}
+                    {/*<span className="subtitle">this is an apply, and we will verify it.</span>*/}
                 </div>
                 <div style={{minWidth: 800}}>
-                    {type === 'edit' && <div className="technicalDataGridItem" style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: "space-between",
-                        marginBottom: '1rem'
-                    }}>
-                        <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset',transform: 'translateY(10px)'}}>
-                            { "winery_name".split('_').map(str => <span key={str}
-                                                                        style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
+                    <form onSubmit={handleSubmit(submit)}>
+
+                        {type === 'edit' && <div className="technicalDataGridItem" style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: "space-between",
+                            marginBottom: '1rem'
+                        }}>
+                        <span className="technicalDataGridProperty"
+                              style={{fontSize: '16px', lineHeight: 'unset', transform: 'translateY(10px)'}}>
+                            {"winery_name".split('_').map(str => <span key={str}
+                                                                       style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
                         </span>
-                        <div className="selectContainer" alt="Select a Winery">
-                            <select className="selectDropdown technicalFormInput" name="wine" value={wineryName}
-                                    style={{width: '34.8rem', height: '2rem', marginLeft: '7.6rem'}}
-                                    onChange={x => setWineryName(x.target.value)}>
-                                <option value="">- Select -</option>
-                                {filters && filters["wineries"]?.map((element) => <option key={element}
-                                                                                          value={element}>{element}</option>)}
-                            </select>
-                        </div>
-                    </div>}
-                    {Object.keys(technicalForm).map((element) => <div className="technicalDataGridItem"
-                                                                      key={element} style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: "space-between",
-                        marginBottom: '1rem'
-                    }}>
+                            <div className="selectContainer" alt="Select a Winery">
+                                <select className="selectDropdown technicalFormInput" name="wine" value={wineryName}
+                                        style={{width: '34.8rem', height: '2rem', marginLeft: '7.6rem'}}
+                                        onChange={x => setWineryName(x.target.value)}>
+                                    <option value="">- Select -</option>
+                                    {filters && filters["wineries"]?.map((element) => <option key={element}
+                                                                                              value={element}>{element}</option>)}
+                                </select>
+                            </div>
+                        </div>}
+                        {Object.keys(technicalForm).map((element) => <>
+                            <div className="technicalDataGridItem"
+                                 key={element} style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: "space-between",
+                                marginBottom: '1rem'
+                            }}>
                         <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset'}}>
                             {element.split('_').map(str => <span key={str}
                                                                  style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
                         </span>
-                        {element !== 'winery_bio' ?
-                            <input style={{maxWidth: 500}} className="technicalFormInput" value={technicalForm[element]}
-                                   onChange={e => {
-                                       setTechnicalForm((prev) => {
-                                           return {
-                                               ...prev,
-                                               [element]: e.target.value
-                                           }
-                                       })
-                                   }}/> : <textarea style={{maxWidth: 520, height: '12rem', padding: '1rem'}}
-                                                    className="technicalFormInput"
-                                                    value={technicalForm[element]}
-                                                    onChange={e => {
-                                                        setTechnicalForm((prev) => {
-                                                            return {
-                                                                ...prev,
-                                                                [element]: e.target.value
-                                                            }
-                                                        })
-                                                    }}/>}
-                    </div>)}
-                    <div className="technicalDataGridItem"
-                         style={{
-                             display: 'flex',
-                             flexDirection: 'row',
-                             justifyContent: "space-between",
-                             marginBottom: '1rem'
-                         }}>
+                                {element !== 'winery_bio' ?
+                                    <input style={{maxWidth: 500}} type={types[element]}
+                                           className="technicalFormInput"  {...register(element, {required: true})}
+                                    /> : <textarea style={{maxWidth: 520, height: '12rem', padding: '1rem'}}
+                                                   className="technicalFormInput"
+                                                   {...register(element, {required: true})}
+                                    />}
+                            </div>
+                            <div>{errors[element]?.type === 'required' &&
+                                <div style={{color: 'red', marginLeft: '80%', marginBottom: '1rem'}}>This field is
+                                    required</div>}</div>
+                        </>)}
+                        <div className="technicalDataGridItem"
+                             style={{
+                                 display: 'flex',
+                                 flexDirection: 'row',
+                                 justifyContent: "space-between",
+                                 marginBottom: '1rem'
+                             }}>
                             <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset'}}>
                             Winery Picture
                             </span>
-                        <button style={{
-                            maxWidth: 555,
-                            height: "2rem",
-                            color: '#290b5b',
-                            fontWeight: 'bold',
-                            fontSize: '20px'
-                        }}
-                                onClick={() => {
-                                    document.getElementById('upload').click()
-                                }}
-                                className="technicalFormInput">add from computer
-                        </button>
+                            <button style={{
+                                maxWidth: 555,
+                                height: "2rem",
+                                color: '#290b5b',
+                                fontWeight: 'bold',
+                                fontSize: '20px'
+                            }}
+                                    onClick={() => {
+                                        document.getElementById('upload').click()
+                                    }}
+                                    className="technicalFormInput">add from computer
+                            </button>
 
-                        <input id="upload" style={{display: 'none'}} type='file'/>
-                    </div>
-                </div>
-                <div style={{display: "flex", textAlign: 'center', margin: '0 auto'}}>
-                    <div className="downloadButton">
-                        <div className="primaryButton darkPurple big" onClick={submit}>Submit
+                            <input id="upload" style={{display: 'none'}} type='file' />
                         </div>
-                    </div>
-                    {
-                        type === 'edit' && <div className="downloadButton">
-                            <div className="primaryButton darkPurple big" onClick={submit}>Delete
+                        <div style={{display: "flex", textAlign: 'center', margin: '0 auto'}}>
+                            <div className="downloadButton">
+                                <button className="primaryButton darkPurple big" type='submit'>Submit
+                                </button>
                             </div>
+                            {
+                                type === 'edit' && <div className="downloadButton">
+                                    <button className="primaryButton darkPurple big" type='submit'>Delete
+                                    </button>
+                                </div>
+                            }
                         </div>
-                    }
+                    </form>
                 </div>
+
             </div>
         </div>
     </div>
