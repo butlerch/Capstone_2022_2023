@@ -160,7 +160,7 @@ export default function Winesheet() {
     localStorage.setItem('desc',JSON.stringify(data));
     navigate("/winesheetDetail/" + bottle_id);
   };
-  
+
     return <div className="winesheetPageContainer">
         <div className="winesheetPageCard">
             {overview && filePaths && technicalData && neighbors ? <>
@@ -192,7 +192,7 @@ export default function Winesheet() {
                                         <span className="technicalDataGridProperty">{element.property}</span>
                                         <span>
                                         <span className="technicalDataGridValue">{element.value}</span>
-                                            {isAuthenticated && element.property === "Winery" && <>
+                                            {isAuthenticated && <>
                                                 {wineryHeart ? <img src={heartIcon} style={{
                                                         display: 'inline',
                                                         cursor: "pointer",
