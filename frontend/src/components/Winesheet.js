@@ -4,7 +4,7 @@ import {getConfig} from "../config/config";
 import {useEffect, useState} from "react";
 
 // Routing & Paths
-import {Link, useParams, useNavigate} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 
 // Style & Components
@@ -34,6 +34,8 @@ export default function Winesheet() {
     const [heart, setHeart] = useState(null);
     const [wineryHeart, setWineryHeart] = useState(null);
     const navigate = useNavigate();
+
+    const [favoriteProperties, setFavoriteProperties] = useState(null);
 
 
     async function toggleFavorites() {
@@ -65,6 +67,18 @@ export default function Winesheet() {
                 } catch (favError) {
                     setError(favError)
                 }
+            }
+        }
+    }
+
+    function toggleFavoriteProperties(property) {
+        if (isAuthenticated) {
+            if (favoriteProperties === null) {
+                setFavoriteProperties([property])
+            } else if (favoriteProperties.includes(property)) {
+                setFavoriteProperties(favoriteProperties.filter((item) => item !== property))
+            } else {
+                setFavoriteProperties([...favoriteProperties, property])
             }
         }
     }
@@ -154,12 +168,12 @@ export default function Winesheet() {
         console.log(error.message)
     }
 
-  const toDetail = () => {
-    console.log('filepath',filePaths);
-    let data = {...filePaths,...overview};
-    localStorage.setItem('desc',JSON.stringify(data));
-    navigate("/winesheetDetail/" + bottle_id);
-  };
+    const toDetail = () => {
+        console.log('filepath', filePaths);
+        let data = {...filePaths, ...overview};
+        localStorage.setItem('desc', JSON.stringify(data));
+        navigate("/winesheetDetail/" + bottle_id);
+    };
 
     return <div className="winesheetPageContainer">
         <div className="winesheetPageCard">
@@ -169,21 +183,21 @@ export default function Winesheet() {
                         {/* Navigation Arrow (Desktop) */}
                         <div className="navArrow">
                             <Link to={neighbors.prevSheetURL}><img
-                                src={prevIcon} alt="Navigate to Previous Winesheet"/></Link>
+                                src={prevIcon} alt="Navigate to Previous Winesheet" /></Link>
                         </div>
 
-              {/* Title & Subtitle */}
-              <div className="technicalData">
-                <div className="technicalDataHeader">
-                  <span className="title">{overview.title}</span>
-                  <div
-                    className="primaryButton myprimaryButton"
-                    onClick={() => toDetail()}
-                  >
-                    Visit winery
-                  </div>
-                  <span className="subtitle">{overview.subtitle}</span>
-                </div>
+                        {/* Title & Subtitle */}
+                        <div className="technicalData">
+                            <div className="technicalDataHeader">
+                                <span className="title">{overview.title}</span>
+                                <div
+                                    className="primaryButton myprimaryButton"
+                                    onClick={() => toDetail()}
+                                >
+                                    Visit winery
+                                </div>
+                                <span className="subtitle">{overview.subtitle}</span>
+                            </div>
 
                             {/* Technical Data Grid */}
                             <div className="technicalDataGrid">
@@ -193,15 +207,15 @@ export default function Winesheet() {
                                         <span>
                                         <span className="technicalDataGridValue">{element.value}</span>
                                             {isAuthenticated && <>
-                                                {wineryHeart ? <img src={heartIcon} style={{
+                                                {favoriteProperties?.includes(element.property) ? <img src={heartIcon} style={{
                                                         display: 'inline',
                                                         cursor: "pointer",
                                                         marginLeft: "3px",
                                                         transform: 'translateY(25%)'
                                                     }}
-                                                              height="25px" width="25px"
-                                                              alt="(SVGREPO CC0 License) Favorite a Wine"
-                                                              onClick={() => toggleWineryFavorites(element.value)}/> :
+                                                                                               height="25px" width="25px"
+                                                                                               alt="(SVGREPO CC0 License) Favorite a Wine"
+                                                                                               onClick={() => toggleFavoriteProperties(element.property)} /> :
                                                     <img src={emptyHeartIcon} style={{
                                                         display: 'inline',
                                                         cursor: "pointer",
@@ -210,7 +224,7 @@ export default function Winesheet() {
                                                     }}
                                                          height="25px" width="25px"
                                                          alt="(SVGREPO CC0 License) Unfavorite a Wine"
-                                                         onClick={() => toggleWineryFavorites(element.value)}/>}
+                                                         onClick={() => toggleFavoriteProperties(element.property)} />}
                                             </>
                                             }
                                         </span>
@@ -224,7 +238,7 @@ export default function Winesheet() {
                                 {/* Navigation Arrows (Mobile Only) */}
                                 <div className="mobile">
                                     <Link to={neighbors.prevSheetURL}><img
-                                        src={prevIcon} alt="Navigate to Previous Winesheet"/></Link>
+                                        src={prevIcon} alt="Navigate to Previous Winesheet" /></Link>
                                 </div>
                                 <div className="thumbnailContainer">
 
@@ -233,23 +247,23 @@ export default function Winesheet() {
                                     {isAuthenticated && <>
                                         {heart ? <img src={heartIcon} className="favoriteButton" height="50px" width="50px"
                                                       alt="(SVGREPO CC0 License) Favorite a Wine"
-                                                      onClick={() => toggleFavorites()}/> :
+                                                      onClick={() => toggleFavorites()} /> :
                                             <img src={emptyHeartIcon} className="favoriteButton" height="50px" width="50px"
                                                  alt="(SVGREPO CC0 License) Unfavorite a Wine"
-                                                 onClick={() => toggleFavorites()}/>}
+                                                 onClick={() => toggleFavorites()} />}
                                     </>
                                     }
 
                                     {/* Winesheet Preview Image */}
                                     <a href={filePaths.file} download>
                                         <img src={filePaths.thumbnail} className="winesheetPageThumbnail"
-                                             alt="Winesheet Download Button"/>
+                                             alt="Winesheet Download Button" />
                                     </a>
                                 </div>
                                 {/* Navigation Arrows (Mobile) */}
                                 <div className="mobile">
                                     <Link to={neighbors.nextSheetURL}><img
-                                        src={nextIcon} alt="Navigate to Previous Winesheet"/></Link>
+                                        src={nextIcon} alt="Navigate to Previous Winesheet" /></Link>
                                 </div>
                             </div>
                             {/* Download Button */}
@@ -271,11 +285,11 @@ export default function Winesheet() {
                         {/* Navigation Arrow (Desktop) */}
                         <div className="navArrow">
                             <Link to={neighbors.nextSheetURL}><img
-                                src={nextIcon} alt="Navigate to Next Winesheet"/></Link>
+                                src={nextIcon} alt="Navigate to Next Winesheet" /></Link>
                         </div>
                     </div>
                 </>
-                : <><Loading/></>}
+                : <><Loading /></>}
         </div>
     </div>
 }
