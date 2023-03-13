@@ -16,7 +16,7 @@ function NavBottom() {
     return <div className="navBottomBar">
         <div className="bottomBarElements">
 
-            {isAuthenticated && <Link to="/admin" className="bottomBarText">Admin</Link>}
+            {/* {isAuthenticated && <Link to="/admin" className="bottomBarText">Admin</Link>} */}
         </div>
 
         <div className="bottomBarElements">
