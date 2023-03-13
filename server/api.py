@@ -37,24 +37,14 @@ auth0 = oauth.register(
 )
 
 #== Database Instance  ==
-'''db = psycopg2.connect(
+db = psycopg2.connect(
     host=os.environ.get('DB_HOST'),
     port=os.environ.get('DB_PORT'),
     user=os.environ.get('DB_USER'),
     password=os.environ.get('DB_PASSWORD'),
     database=os.environ.get('DATABASE_NAME')
-)'''
-
-# For debugging Database connection issues
-db = psycopg2.connect(
-    host = '35.236.118.9',
-    port = 5432,
-    user = 'butlerch',
-    password = 'wdlJim@2023',
-    database = 'postgres'
 )
-# if(db):
-#     print('db == ',)
+
 cursor = db.cursor()
 
 # Registers the route for the User Entity (located in user.py)
@@ -403,12 +393,7 @@ def list_of_wine_names():
     '''
     A specific route to only pull wine_names
     '''
-    returnable = []
-    result = {
-        "year": [],
-        "winery_name": [],
-        "wine_name": []
-    }
+
     cursor.execute("SELECT bottle_id, year, winery_name, wine_name "
                    "FROM bottle_data ORDER BY bottle_id;")
     query_results = cursor.fetchall()

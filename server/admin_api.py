@@ -19,19 +19,12 @@ pdf_pathway = '../frontend/public/pdfs'
 pic_pathway = '../frontend/public/pictures'
 
 # == Database Instance  ==
-'''db = psycopg2.connect(
+connection = psycopg2.connect(
     host=os.environ.get('DB_HOST'),
     port=os.environ.get('DB_PORT'),
     user=os.environ.get('DB_USER'),
     password=os.environ.get('DB_PASSWORD'),
     database=os.environ.get('DATABASE_NAME')
-)'''
-connection = psycopg2.connect(
-    host='35.236.118.9',
-    port=5432,
-    user='butlerch',
-    password='wdlJim@2023',
-    database='postgres'
 )
 
 cursor = connection.cursor()
@@ -74,7 +67,7 @@ def print_psycopg2_exception(err):
 
 def make_a_returnable_single_response(query_results, colnames):
     '''
-    This function helps build a string for SQL
+    This function helps build a string for SQL from json response
     '''
     returnable = {}
     i = 0
@@ -92,7 +85,8 @@ def make_a_returnable_single_response(query_results, colnames):
 
 def prep_input(query_results, colnames):
     '''
-    This function helps build a json object
+    Function to match the json reponse format to allow for quicker
+    joining between the two datasets
     '''
     returnable = {}
     i = 0
@@ -157,7 +151,10 @@ def add_wine():
 @bp.route('/edit_wine', methods=['POST'])
 def edit_wine():
     '''
-
+    Function/APi to edit a wine bottle
+    Takes in the response data, queries the correct information
+    Checks the differences and unions them to send the updated information
+    to the database
     '''
     # Pull the information to add from the request object
     try:
@@ -250,7 +247,7 @@ def edit_wine():
 @bp.route('/add_winery', methods=['POST'])
 def add_winery():
     '''
-
+    Function/API call to add a new winery
     '''
     # Pull the information to add
     pdf = request.files['file']
@@ -271,8 +268,6 @@ def add_winery():
 
     winery_name, winemaker, address, city, state, zipcode, phone_number,\
         website, bio = cleaned.values()
-
-    print((cleaned, filename))
 
     try:
         cursor.execute(cursor.mogrify("INSERT INTO winery_data (winery_name,"
@@ -299,7 +294,10 @@ def add_winery():
 @bp.route('/edit_winery', methods=['POST'])
 def edit_winery():
     '''
-
+    Function/APi to edit a wine bottle
+    Takes in the response data, queries the correct information
+    Checks the differences and unions them to send the updated information
+    to the database
     '''
     # Pull the information to add
     try:
@@ -346,8 +344,6 @@ def edit_winery():
 
     winery_name, winemaker, address, city, state, zipcode, phone_number,\
         website, bio = cleaned.values()
-
-    print((cleaned, filename))
 
     try:
         cursor.execute(cursor.mogrify(
