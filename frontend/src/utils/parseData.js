@@ -4,7 +4,7 @@
 /* Function Description: Given a winesheet, builds the title & subtitle strings for various components. */
 export function parseOverview(techsheetData) {
     let overview = {};
-    overview.title = (techsheetData["year"] || "") + " " + (cleanString(techsheetData["winery_name"]) || "");
+    overview.title = (techsheetData["year"] || "") + " " + (cleanString(techsheetData["winery_name"]) || "") + " " + (techsheetData["wine_name"]);
     overview.bottle_id = techsheetData["bottle_id"];
 
     /* Parse the wine name, a string array.*/
@@ -27,9 +27,17 @@ export function parseFilePaths(techsheetData, fileDirectory = "/pdfs/", fileForm
 
     let overview = {};
 
-    /* If necessary, strips a faulty extension from the source file. */
-    if (techsheetData["source_file"].substring(techsheetData["source_file"].length - 5) === ".json") {
+    /* If necessary, strips a faulty json extension from the source file. */
+    if (techsheetData["source_file"].substring(techsheetData["source_file"].length - 5) === ".json" ||
+    techsheetData["source_file"].substring(techsheetData["source_file"].length - 5) === ".jpeg") {
         overview.filename = techsheetData["source_file"].substring(0, techsheetData["source_file"].length - 5);
+    }
+
+    /* For ease of execution, strips pdf file handler from source file. */
+    if (techsheetData["source_file"].substring(techsheetData["source_file"].length - 4) === ".pdf" ||
+    techsheetData["source_file"].substring(techsheetData["source_file"].length - 4) === ".jpg" ||
+    techsheetData["source_file"].substring(techsheetData["source_file"].length - 4) === ".png") {
+        overview.filename = techsheetData["source_file"].substring(0, techsheetData["source_file"].length - 4);
     }
 
     /* Encode the filename.*/
@@ -127,8 +135,7 @@ export function parseTechnicalData(techsheetData) {
     if (techsheetData["winery_name"] !== "NULL" && techsheetData["winery_name"] !== undefined) {
         technicalData.push({
             "property": "Winery",
-            "value": cleanString(techsheetData["winery_name"]),
-            "id": technicalData["winery_id"]
+            "value": cleanString(techsheetData["winery_name"])
         })
     }
 
