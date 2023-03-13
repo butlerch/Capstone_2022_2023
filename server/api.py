@@ -1,11 +1,12 @@
 # Description: API entrypoint; contains all the functionality for accessing the database.
-
+import json
 import string
 import psycopg2
 from flask import Flask, jsonify, request, abort, Response, make_response
 from verify_jwt import verify_jwt, AuthError
 import re
 import user
+import admin_api
 from authlib.integrations.flask_client import OAuth
 import os
 from dotenv import load_dotenv
@@ -36,28 +37,29 @@ auth0 = oauth.register(
 )
 
 #== Database Instance  ==
-db = psycopg2.connect(
+'''db = psycopg2.connect(
     host=os.environ.get('DB_HOST'),
     port=os.environ.get('DB_PORT'),
     user=os.environ.get('DB_USER'),
     password=os.environ.get('DB_PASSWORD'),
     database=os.environ.get('DATABASE_NAME')
-)
+)'''
 
 # For debugging Database connection issues
-# db = psycopg2.connect(
-#     host='34.82.130.245',
-#     port=5432,
-#     user='postgres',
-#     password='qwert1234',
-#     database='postgres'
-# )
+db = psycopg2.connect(
+    host = '35.236.118.9',
+    port = 5432,
+    user = 'butlerch',
+    password = 'wdlJim@2023',
+    database = 'postgres'
+)
 # if(db):
 #     print('db == ',)
 cursor = db.cursor()
 
 # Registers the route for the User Entity (located in user.py)
 app.register_blueprint(user.bp)
+app.register_blueprint(admin_api.bp)
 
 
 def make_a_returnable_single(query_results, colnames, num_bottles):
@@ -243,7 +245,6 @@ def return_bottle_data():
     url params: quantity
     values: "all", int
     '''
-
     quantity = request.args.get('quantity')
     if not quantity:
         quantity = 'all'
@@ -363,6 +364,9 @@ def sort_by_varietal():
 
 @app.route('/varietalNames', methods=['GET'])
 def varietal_names_in_bottle_data():
+    '''
+    A specific route to pull varietal names
+    '''
     returnable = []
 
     cursor.execute("SELECT DISTINCT wine_name, varietals FROM bottle_data;")
@@ -384,16 +388,35 @@ def varietal_names_in_bottle_data():
 @app.route('/listOfWineries', methods=['GET'])
 def list_of_wineries():
     '''
+    A specific route to only pull winery_names
     '''
-    returnable = []
-
     cursor.execute("SELECT DISTINCT winery_name FROM bottle_data;")
     query_results = cursor.fetchall()
     if len(query_results) < 1:
         abort(404)
-    # returnable = [query_result[0] for query_result in query_results]
     returnable = [''.join(query_result) for query_result in query_results]
     return jsonify({"wineries": returnable})
+
+
+@app.route('/bottleNames', methods=['GET'])
+def list_of_wine_names():
+    '''
+    A specific route to only pull wine_names
+    '''
+    returnable = []
+    result = {
+        "year": [],
+        "winery_name": [],
+        "wine_name": []
+    }
+    cursor.execute("SELECT bottle_id, year, winery_name, wine_name "
+                   "FROM bottle_data ORDER BY bottle_id;")
+    query_results = cursor.fetchall()
+    if len(query_results) < 1:
+        abort(404)
+
+    colnames = [desc[0] for desc in cursor.description]
+    return make_a_returnable_multiple(query_results, colnames)
 
 
 ###############################################################################
@@ -456,7 +479,6 @@ def wineries():
     query_results = cursor.fetchall()
     if len(query_results) < 1:
         abort(404)
-    # returnable = [query_result[0] for query_result in query_results]
     returnable = [''.join(query_result) for query_result in query_results]
     return jsonify({"wineries": returnable})
 
