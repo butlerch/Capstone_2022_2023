@@ -112,37 +112,36 @@ const Bottle = () => {
                 </div>
                 <form onSubmit={handleSubmit(submit)}>
 
-                    {type === 'edit' && <>
-                        <div className="technicalDataGridItem" style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: "space-between",
-                            marginBottom: '1rem'
-                        }}>
+
+                    <div className="technicalDataGridItem" style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: "space-between",
+                        marginBottom: '1rem'
+                    }}>
                         <span className="technicalDataGridProperty"
                               style={{fontSize: '16px', lineHeight: 'unset', transform: 'translateY(10px)'}}>
                             {"winery_name".split('_').map(str => <span key={str}
                                                                        style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
                         </span>
-                            <div className="selectContainer" alt="Select a Winery">
-                                <select className="selectDropdown technicalFormInput"
-                                        name="wine" {...register('winery_name', {required: true})}
-                                        style={{width: '34.8rem', height: '2rem', marginLeft: '7.6rem'}}
-                                        onChange={x => setWineryName(x.target.value)}>
-                                    <option value="">- Select -</option>
-                                    {filters && filters["wineries"]?.map((element) => <option key={element}
-                                                                                              value={element}>{element}</option>)}
-                                </select>
-                            </div>
-
+                        <div className="selectContainer" alt="Select a Winery">
+                            <select className="selectDropdown technicalFormInput"
+                                    name="wine" {...register('winery_name', {required: true})}
+                                    style={{width: '34.8rem', height: '2rem', marginLeft: '7.6rem'}}
+                                    onChange={x => setWineryName(x.target.value)}>
+                                <option value="">- Select -</option>
+                                {filters && filters["wineries"]?.map((element) => <option key={element}
+                                                                                          value={element}>{element}</option>)}
+                            </select>
                         </div>
-                        <div>{errors['winery_name']?.type === 'required' &&
-                            <div style={{color: 'red', marginLeft: '80%', marginBottom: '1rem'}}>This field is
-                                required</div>}</div>
-                    </>}
+
+                    </div>
+                    <div>{errors['winery_name']?.type === 'required' &&
+                        <div style={{color: 'red', marginLeft: '80%', marginBottom: '1rem'}}>This field is
+                            required</div>}</div>
                     <div style={{minWidth: 800}}>
 
-                        {Object.keys(technicalForm).filter(i => !(type === 'edit' && i === 'winery_name')).map((element) =>
+                        {Object.keys(technicalForm).filter(i => !(i === 'winery_name')).map((element) =>
                             <>
                                 <div className="technicalDataGridItem"
                                      key={element} style={{
