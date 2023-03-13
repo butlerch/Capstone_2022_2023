@@ -94,12 +94,21 @@ export default function Tabs() {
                         adminLogin
                     </div>
                     {isLogin ? (
-                        <div
-                            className={type === 2 ? "nav_active nav_item" : "nav_item"}
-                            onClick={() => changeType(2)}
-                        >
-                            Upload data
-                        </div>
+                        <>
+                            <div className={type === 1 ? "nav_active nav_item" : "nav_item"} onClick={() => {
+                                localStorage.removeItem("login");
+                                setIsLogin(false);
+                                openMsg("success", "logout success");
+                            }}>
+                                adminLogout
+                            </div>
+                            <div
+                                className={type === 2 ? "nav_active nav_item" : "nav_item"}
+                                onClick={() => changeType(2)}
+                            >
+                                Upload data
+                            </div>
+                        </>
                     ) : (
                         ""
                     )}

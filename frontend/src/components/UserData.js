@@ -50,7 +50,7 @@ export default function UserData() {
         {/* Seperator Bar */}
         <div className="separator">
             <p>
-                <hr className="separatorBar"/>
+                <hr className="separatorBar" />
             </p>
         </div>
         <div>
@@ -59,7 +59,7 @@ export default function UserData() {
                 {!userData ? <>Loading...</> : <>
                     <div className="heading headingContainer extraCushion"><img className="sideSpace" src={favoriteIcon}
                                                                                 width="25px" height="25px"
-                                                                                alt="My Favorite Techsheets"/><b>My
+                                                                                alt="My Favorite Techsheets" /><b>My
                         Favorite Techsheets</b></div>
                     <div className="primaryButtonContainer">
                         {userData && userData["fav_techsheets"] && userData["fav_techsheets"].length > 0 ? userData["fav_techsheets"].map((element) =>
@@ -73,7 +73,7 @@ export default function UserData() {
                 {!userData ? <>Loading...</> : <>
                     <div className="heading headingContainer extraCushion"><img className="sideSpace" src={favoriteIcon}
                                                                                 width="25px" height="25px"
-                                                                                alt="My Favorite Techsheets"/><b>My
+                                                                                alt="My Favorite Techsheets" /><b>My
                         Favorite Wineries</b></div>
                     <div className="primaryButtonContainer">
                         {userData && userData["fav_wineries"] && userData["fav_wineries"].length > 0 ? userData["fav_wineries"].map((element) =>
@@ -81,8 +81,21 @@ export default function UserData() {
                                 <button id={element} key={element} className="primaryButton narrow mediumPurple"
                                     // Will need to change navigate to the winery page once we have those coded
                                         onClick={() => navigate('/')}>{element["winery_name"]}</button>
-                            </>) : <>You
-                            don't have any favorite wineries.</>}
+                            </>) : <>You don't have any favorite wineries.</>}
+                    </div>
+                </>}
+                {!userData ? <>Loading...</> : <>
+                    <div className="heading headingContainer extraCushion"><img className="sideSpace" src={favoriteIcon}
+                                                                                width="25px" height="25px"
+                                                                                alt="My Favorite Qualities" /><b>My
+                        Favorite Qualities</b></div>
+                    <div className="primaryButtonContainer">
+                        {userData && userData["fav_wineries"] && userData["fav_wineries"].length > 0 ? userData["fav_wineries"].map((element) =>
+                            <>
+                                <button id={element} key={element} className="primaryButton narrow mediumPurple"
+                                    // Will need to change navigate to the winery page once we have those coded
+                                        onClick={() => navigate('/')}>{element["winery_name"]}</button>
+                            </>) : <>You don't have any favorite qualities.</>}
                     </div>
                 </>}
             </blockquote>
