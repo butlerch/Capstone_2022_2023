@@ -3,17 +3,16 @@ import {useSearchParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getConfig} from "../../config/config";
 import axios from "axios";
-import {useForm} from "react-hook-form";
 
 const Bottle = () => {
     const {isAuthenticated} = useAuth0();
     const [searchParams] = useSearchParams();
     const type = searchParams.get('type');
     const [wineryName, setWineryName] = useState('');
+    const [wineName, setWineName] = useState('');
     const [filters, setFilters] = useState({});
     const [error, setError] = useState('');
-    const {register, formState: {errors}, handleSubmit, reset} = useForm();
-
+    const {apiOrigin} = getConfig();
 
     const [technicalForm, setTechnicalForm] = useState({
         "winery_name": "",
@@ -21,56 +20,29 @@ const Bottle = () => {
         "year": "",
         "wine_name": "",
         "pct_alcohol": "",
-        "TA": "",
+        "ta": "",
         "ph": "",
         "soils": "",
-        "varietal": "",
+        "varietals": "",
         "clones": "",
         "clusters": "",
         "aging_process": "",
         "cases_produced": "",
     })
 
-    const types = {
-        "winery_name": "text",
-        "winery_id": "text",
-        "year": "number",
-        "wine_name": "text",
-        "pct_alcohol": "number",
-        "TA": "number",
-        "ph": "number",
-        "soils": "text",
-        "varietal": "text",
-        "clones": "text",
-        "clusters": "text",
-        "aging_process": "text",
-        "cases_produced": "number",
-    }
-
     /* Fetch options to populate the dropdown menu under "Advanced Search." */
     async function fetchFilters() {
         let formattedFilters = {};
 
-        /* Build the "Years" dropdown menu. */
-        let currentYear = new Date().getFullYear()
-        formattedFilters.years = [];
-        for (let i = 2015; i <= currentYear; i++) {
-            formattedFilters.years.push(i);
-        }
-
         try {
+
             /* Fetch "Wineries" */
-            let res1 = await axios(`${apiOrigin}/listOfWineries`);
+            let res1 = await axios(`${apiOrigin}/wineries`);
+            let res2 = await axios(`${apiOrigin}/bottleNames`);
             formattedFilters.wineries = res1.data.wineries;
-            try {
-                /* Fetch varietals. */
-                let res2 = await axios(`${apiOrigin}/varietalNames`);
-                formattedFilters.varietals = res2.data.varietals;
-                setFilters(formattedFilters);
-            } catch (err) {
-                /* Display the error. */
-                setError("Error loading dropdown menu options. Please refresh.");
-            }
+            formattedFilters.wineName = res2.data;
+            setFilters(formattedFilters);
+            console.log(formattedFilters);
 
         } catch (err) {
             /* Display the error. */
@@ -78,130 +50,161 @@ const Bottle = () => {
         }
     }
 
-    useEffect(() => {
-        fetchFilters();
-    }, [])
+    useEffect(() => {fetchFilters()}, [])
+
 
     if (!isAuthenticated) return (<div>No access</div>)
 
-
-    const {apiOrigin} = getConfig();
-
-
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const res = await axios.get(`${apiOrigin}/techsheets/${bottle_id}`);
-    //         setTechnicalForm(res.data)
-    //
-    //     }
-    //
-    //     fetchData()
-    // }, [apiOrigin, bottle_id])
-    console.log(errors)
-
-    const submit = () => {
-        alert('submit')
-        reset()
+    async function submit_wine() {
+        let formData = new FormData();
+        technicalForm["winery_name"] = wineryName;
+        const selectedFile = document.getElementById('upload').files[0];
+        formData.append("file", selectedFile);
+        formData.append("technicalForm", JSON.stringify(technicalForm));
+        formData.append("wine_name", JSON.stringify(wineName));
+        if (type === 'add'){
+            try {
+                /* Perform a search; if successful, pass state & navigate to the "Search Results" page. */
+                await axios.post(`${apiOrigin}/admin/add_wine`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                });
+            } catch (err) {
+                if (err.response.status === 404) {
+                    setError("Unfortunately, nothing matches those search criteria...");
+                } else {
+                    /* If the response status code isn't 200 or 404, store the status code and error message. */
+                    setError("Status Code " + err.response.status + ": " + err.message + "!");
+                }}
+            } else {
+            try {
+                /* Perform a search; if successful, pass state & navigate to the "Search Results" page. */
+                await axios.post(`${apiOrigin}/admin/edit_wine`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                });
+            } catch (err) {
+                if (err.response.status === 404) {
+                    setError("Unfortunately, nothing matches those search criteria...");
+                } else {
+                    /* If the response status code isn't 200 or 404, store the status code and error message. */
+                    setError("Status Code " + err.response.status + ": " + err.message + "!");
+                }
+            }
+        }
     }
+
+    async function delete_wine() {
+
+    }
+
     return <div className="winesheetPageContainer">
         <div className="winesheetPageCard">
             <div className="technicalData" style={{margin: '0 auto'}}>
                 <div className="technicalDataHeader">
                     <span className="title">{type === 'add' ? 'Adding New Wine' : 'Edit Wine'}</span>
-                    {/*<span className="subtitle">this is an apply, and we will verify it.</span>*/}
                 </div>
-                <form onSubmit={handleSubmit(submit)}>
-
-
-                    <div className="technicalDataGridItem" style={{
+                {type === 'edit' ?
+                <div className="technicalDataGridItem" style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: "space-between",
+                    marginBottom: '1rem'
+                }}> 
+                        <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset',transform: 'translateY(10px)'}}>
+                            { "wine_bottle".split('_').map(str => <span key={str}
+                                                                 style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
+                        </span>
+                    <div className="selectContainer" alt="Select a Winery">
+                        <select className="selectDropdown technicalFormInput" name="wine" value={wineName}
+                                style={{width: '34.8rem', height: '2rem', marginLeft: '8.6rem'}}
+                                onChange={x => setWineName(x.target.value)}>
+                            <option value="">- Select -</option>
+                            {filters && filters["wineName"]?.map((value, key) => <option key={key}
+                                value={value.bottle_id}>{value.year + " " + value.winery_name + " " + value.wine_name}</option>)}
+                        </select>
+                    </div>
+                </div>
+                :  <></>}
+                {<div className="technicalDataGridItem" style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: "space-between",
+                    marginBottom: '1rem'
+                }}>
+                        <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset',transform: 'translateY(10px)'}}>
+                            { "winery_name".split('_').map(str => <span key={str}
+                                                                 style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
+                        </span>
+                    <div className="selectContainer" alt="Select a Winery">
+                        <select className="selectDropdown technicalFormInput" name="wine" value={wineryName}
+                                style={{width: '34.8rem', height: '2rem', marginLeft: '7.6rem'}}
+                                onChange={x => setWineryName(x.target.value)}>
+                            <option value="">- Select -</option>
+                            {filters && filters["wineries"]?.map((element) => <option key={element}
+                                                                                      value={element}>{element}</option>)}
+                        </select>
+                    </div>
+                </div>}
+                <div style={{minWidth: 800}}>
+                    {Object.keys(technicalForm).filter(i => !(i === 'winery_name' || i === 'winery_id')).map((element) => <div className="technicalDataGridItem"
+                                                                      key={element} style={{
                         display: 'flex',
                         flexDirection: 'row',
                         justifyContent: "space-between",
                         marginBottom: '1rem'
                     }}>
-                        <span className="technicalDataGridProperty"
-                              style={{fontSize: '16px', lineHeight: 'unset', transform: 'translateY(10px)'}}>
-                            {"winery_name".split('_').map(str => <span key={str}
-                                                                       style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
-                        </span>
-                        <div className="selectContainer" alt="Select a Winery">
-                            <select className="selectDropdown technicalFormInput"
-                                    name="wine" {...register('winery_name', {required: true})}
-                                    style={{width: '34.8rem', height: '2rem', marginLeft: '7.6rem'}}
-                                    onChange={x => setWineryName(x.target.value)}>
-                                <option value="">- Select -</option>
-                                {filters && filters["wineries"]?.map((element) => <option key={element}
-                                                                                          value={element}>{element}</option>)}
-                            </select>
-                        </div>
-
-                    </div>
-                    <div>{errors['winery_name']?.type === 'required' &&
-                        <div style={{color: 'red', marginLeft: '80%', marginBottom: '1rem'}}>This field is
-                            required</div>}</div>
-                    <div style={{minWidth: 800}}>
-
-                        {Object.keys(technicalForm).filter(i => !(i === 'winery_name')).map((element) =>
-                            <>
-                                <div className="technicalDataGridItem"
-                                     key={element} style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: "space-between",
-                                    marginBottom: '1rem'
-                                }}>
                         <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset'}}>
                             {element.split('_').map(str => <span key={str}
                                                                  style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
                         </span>
-                                    <input style={{maxWidth: 500}} className="technicalFormInput"
-                                           type={types[element]}
-                                           {...register(element, {required: true})} />
-                                </div>
-                                <div>{errors[element]?.type === 'required' &&
-                                    <div style={{color: 'red', marginLeft: '80%', marginBottom: '1rem'}}>This field is
-                                        required</div>}</div>
-                            </>)}
-                        <div className="technicalDataGridItem"
-                             style={{
-                                 display: 'flex',
-                                 flexDirection: 'row',
-                                 justifyContent: "space-between",
-                                 marginBottom: '1rem'
-                             }}>
+                        <input style={{maxWidth: 500}} className="technicalFormInput" value={technicalForm[element]}
+                               onChange={e => {
+                                   setTechnicalForm((prev) => {
+                                       return {
+                                           ...prev,
+                                           [element]: e.target.value
+                                       }
+                                   })
+                               }}/>
+                    </div>)}
+                    <div className="technicalDataGridItem"
+                         style={{
+                             display: 'flex',
+                             flexDirection: 'row',
+                             justifyContent: "space-between",
+                             marginBottom: '1rem'
+                         }}>
                         <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset'}}>
                             TechSheet Json
                         </span>
-                            <button style={{
-                                maxWidth: 555,
-                                height: "2rem",
-                                color: '#290b5b',
-                                fontWeight: 'bold',
-                                fontSize: '20px'
-                            }}
-                                    onClick={() => {
-                                        document.getElementById('upload').click()
-                                    }}
-                                    className="technicalFormInput">add from computer
-                            </button>
-                            <input id="upload" style={{display: 'none'}} type='file' />
-                        </div>
-                    </div>
+                        <button style={{
+                            maxWidth: 555,
+                            height: "2rem",
+                            color: '#290b5b',
+                            fontWeight: 'bold',
+                            fontSize: '20px'
+                        }}
+                                onClick={() => {
+                                    document.getElementById('upload').click()
+                                }}
+                                className="technicalFormInput">add from computer
+                        </button>
 
-                    <div style={{display: "flex", textAlign: 'center', margin: '0 auto'}}>
-                        <div className="downloadButton">
-                            <button className="primaryButton darkPurple big" type='submit'>Submit
-                            </button>
-                        </div>
-                        {type === 'edit' && <div className="downloadButton">
-                            <button className="primaryButton darkPurple big" type='submit'>Delete</button>
-                        </div>}
+                        <input id="upload" style={{display: 'none'}} type='file'/>
                     </div>
-                </form>
-
+                </div>
+                <div style={{display: "flex", textAlign: 'center', margin: '0 auto'}}>
+                    <div className="downloadButton">
+                        <div className="primaryButton darkPurple big" onClick={submit_wine}>Submit</div>
+                    </div>
+                    {type === 'edit' && <div className="downloadButton">
+                        <div className="primaryButton darkPurple big" onClick={delete_wine}>Delete</div>
+                    </div>}
+                </div>
             </div>
-
-
         </div>
     </div>
 
