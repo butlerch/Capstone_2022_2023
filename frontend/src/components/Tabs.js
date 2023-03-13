@@ -42,6 +42,8 @@ export default function Tabs() {
     const submit = () => {
         if (!name) return openMsg("error", "Please enter name");
         if (!password) return openMsg("error", "Please enter password");
+        if(name !== "admin") return openMsg("error","Username wrong");
+        if(password !== 'admin123') return openMsg("error","Password wrong")
         // sent request
         // axios({
         //   url: "http://localhost:9264/wine_lake_manage/admin_login",
@@ -67,6 +69,9 @@ export default function Tabs() {
         setMsgType(type);
         setMsg(msg);
     };
+    const toUploadData = () => {
+        navigate("/admin")
+    }
     return (
         <div className="tabs">
             <Snackbar
@@ -104,7 +109,7 @@ export default function Tabs() {
                             </div>
                             <div
                                 className={type === 2 ? "nav_active nav_item" : "nav_item"}
-                                onClick={() => changeType(2)}
+                                onClick={() => toUploadData()}
                             >
                                 Upload data
                             </div>
