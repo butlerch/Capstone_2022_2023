@@ -67,6 +67,11 @@ const Bottle = () => {
         let formData = new FormData();
         technicalForm["winery_name"] = wineryName;
         const selectedFile = document.getElementById('upload').files[0];
+        if(selectedFile === undefined) {
+            setError("Please upload the tech sheet!");
+            setMessageOpen(true);
+            return;
+        }
         formData.append("file", selectedFile);
         formData.append("technicalForm", JSON.stringify(technicalForm));
         formData.append("wine_name", JSON.stringify(wineName));
@@ -154,6 +159,7 @@ const Bottle = () => {
                         <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset',transform: 'translateY(10px)'}}>
                             { "winery_name".split('_').map(str => <span key={str}
                                                                  style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
+                            {requiredFields.includes("winery_name") && <span style={{color: 'red'}}>*</span>}
                         </span>
                     <div className="selectContainer" alt="Select a Winery">
                         <select className="selectDropdown technicalFormInput" name="wine" value={wineryName}
@@ -176,6 +182,7 @@ const Bottle = () => {
                         <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset'}}>
                             {element.split('_').map(str => <span key={str}
                                                                  style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
+                            {requiredFields.includes(element) && <span style={{color: 'red'}}>*</span>}
                         </span>
                         <input style={{maxWidth: 500}} className="technicalFormInput" value={technicalForm[element]}
                                onChange={e => {
@@ -195,7 +202,8 @@ const Bottle = () => {
                              marginBottom: '1rem'
                          }}>
                         <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset'}}>
-                            TechSheet Json
+                            <span>TechSheet Json</span>
+                            <span style={{color: 'red'}}>*</span>
                         </span>
                         <button style={{
                             maxWidth: 555,
