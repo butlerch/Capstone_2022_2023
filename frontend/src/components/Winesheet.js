@@ -160,7 +160,7 @@ export default function Winesheet() {
     localStorage.setItem('desc',JSON.stringify(data));
     navigate("/winesheetDetail/" + bottle_id);
   };
-  
+
     return <div className="winesheetPageContainer">
         <div className="winesheetPageCard">
             {overview && filePaths && technicalData && neighbors ? <>
@@ -258,13 +258,12 @@ export default function Winesheet() {
                                     <a href={filePaths.file} className="primaryButton darkPurple big" download>Download
                                         Techsheet</a>
                                 </div>
-                                {
-                                    isAuthenticated && <div className="downloadButton">
-                                        <a href={`/submit?bottle=${bottle_id}`} className="primaryButton darkPurple big">Edit
-                                            Information</a>
-                                    </div>
-                                }
-
+                                {/*{*/}
+                                {/*    isAuthenticated && <div className="downloadButton">*/}
+                                {/*        <a href={`/submit?bottle=${bottle_id}`} className="primaryButton darkPurple big">Edit*/}
+                                {/*            Information</a>*/}
+                                {/*    </div>*/}
+                                {/*}*/}
                             </div>
 
                         </div>
