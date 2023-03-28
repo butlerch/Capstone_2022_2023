@@ -2,6 +2,7 @@ import {useAuth0} from "@auth0/auth0-react";
 import {useSearchParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getConfig} from "../../config/config";
+import {Snackbar,Alert} from "@mui/material";
 import axios from "axios";
 
 const Bottle = () => {
@@ -13,6 +14,11 @@ const Bottle = () => {
     const [filters, setFilters] = useState({});
     const [error, setError] = useState('');
     const {apiOrigin} = getConfig();
+    const [messageOpen, setMessageOpen] = useState(false);
+
+    const handleClose = () => {
+        setMessageOpen(false);
+    }
 
     const [technicalForm, setTechnicalForm] = useState({
         "winery_name": "",
@@ -29,6 +35,8 @@ const Bottle = () => {
         "aging_process": "",
         "cases_produced": "",
     })
+
+    const requiredFields = [ "winery_name", "year", "wine_name", "varietals", "clones", "clusters", "aging_process", "cases_produced"];
 
     /* Fetch options to populate the dropdown menu under "Advanced Search." */
     async function fetchFilters() {
@@ -62,6 +70,15 @@ const Bottle = () => {
         formData.append("file", selectedFile);
         formData.append("technicalForm", JSON.stringify(technicalForm));
         formData.append("wine_name", JSON.stringify(wineName));
+        for(let i = 0; i < requiredFields.length; i++) {
+            if (technicalForm[requiredFields[i]] === "") {
+                const str = requiredFields[i];
+                setError(`${str.split("_").map(str => str[0].toLocaleUpperCase() + str.slice(1)).join(" ")} is required!`);
+                setMessageOpen(true);
+                return;
+            }
+        }
+
         if (type === 'add'){
             try {
                 /* Perform a search; if successful, pass state & navigate to the "Search Results" page. */
@@ -112,7 +129,7 @@ const Bottle = () => {
                     flexDirection: 'row',
                     justifyContent: "space-between",
                     marginBottom: '1rem'
-                }}> 
+                }}>
                         <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset',transform: 'translateY(10px)'}}>
                             { "wine_bottle".split('_').map(str => <span key={str}
                                                                  style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
@@ -206,6 +223,11 @@ const Bottle = () => {
                 </div>
             </div>
         </div>
+        <Snackbar open={messageOpen} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+                {error}
+            </Alert>
+        </Snackbar>
     </div>
 
 
