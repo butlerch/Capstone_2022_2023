@@ -39,7 +39,7 @@ import Winery from "./views/Admin/Winery";
 // Auth0 Configuration
 const onRedirectCallback = (appState) => {
     history.push(
-        appState && appState.returnTo ? appState.returnTo : window.location.pathname
+        appState && appState.returnTo ? appState?.returnTo : window?.location?.pathname
     );
 };
 
