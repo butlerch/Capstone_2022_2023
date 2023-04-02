@@ -24,7 +24,7 @@ export default function Landing() {
 
     /* State for the background grid on the landing page & the search box. */
     const [grid, setGrid] = useState([])
-    const totalGridItems = 16;
+    const totalGridItems = 24;
     const techsheetThumbnailSize = "200px";
 
     /* Select Menu Dropdown Items */
@@ -261,13 +261,13 @@ export default function Landing() {
                         </div>
                         <div className="surpriseMe">
                             <Link
-                                to={randomWinesheetPath}
+                                to={randomWinesheetPath || ''}
                                 className="primaryButton big darkPurple">Surprise Me?!</Link>
                         </div>
                     </div>
                 </div>
                 {/* If the server query was successful, display the winesheets landing-page grid.*/}
-                {grid.map((element) => <Link to={element.clientURL} key={element.file}>
+                {grid.map((element, index) => <Link to={element.clientURL || ''} key={String(element.file + index)}>
                     <div className="wineGridItem"><img
                         src={element.thumbnail} width={techsheetThumbnailSize} height={techsheetThumbnailSize}
                         alt={`${element.filename} Winesheet`} />

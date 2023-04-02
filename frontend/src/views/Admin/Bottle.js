@@ -60,8 +60,29 @@ const Bottle = () => {
 
     useEffect(() => {fetchFilters()}, [])
 
+    useEffect(() => {
+        try {
+            check()
+        } catch (e) {
+            return
+        }
+    }, [technicalForm])
+
 
     if (!isAuthenticated) return (<div>No access</div>)
+
+
+
+    const check = () => {
+        for(let i = 0; i < requiredFields.length; i++) {
+            if (technicalForm[requiredFields[i]] === "") {
+                const str = requiredFields[i];
+                setError(`${str.split("_").map(str => str[0].toLocaleUpperCase() + str.slice(1)).join(" ")} is required!`);
+                setMessageOpen(true);
+                throw Error()
+            }
+        }
+    }
 
     async function submit_wine() {
         let formData = new FormData();
@@ -75,13 +96,10 @@ const Bottle = () => {
         formData.append("file", selectedFile);
         formData.append("technicalForm", JSON.stringify(technicalForm));
         formData.append("wine_name", JSON.stringify(wineName));
-        for(let i = 0; i < requiredFields.length; i++) {
-            if (technicalForm[requiredFields[i]] === "") {
-                const str = requiredFields[i];
-                setError(`${str.split("_").map(str => str[0].toLocaleUpperCase() + str.slice(1)).join(" ")} is required!`);
-                setMessageOpen(true);
-                return;
-            }
+        try {
+            check()
+        } catch (e) {
+            return;
         }
 
         if (type === 'add'){
