@@ -35,6 +35,7 @@ const Bottle = () => {
         "aging_process": "",
         "cases_produced": "",
     })
+    
 
     const requiredFields = [ "winery_name", "year", "wine_name", "varietals", "clones", "clusters", "aging_process", "cases_produced"];
 
