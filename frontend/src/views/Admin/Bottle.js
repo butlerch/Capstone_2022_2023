@@ -14,14 +14,14 @@ const Bottle = () => {
     const [filters, setFilters] = useState({});
     const [error, setError] = useState('');
     const {apiOrigin} = getConfig();
-    const [messageOpen, setMessageOpen] = useState(false);
+    const [messageOpen, setMessageOpen] = useState(true);
 
     const handleClose = () => {
         setMessageOpen(false);
     }
 
     const [technicalForm, setTechnicalForm] = useState({
-        "winery_name": "",
+        // "winery_name": "",
         "winery_id": "",
         "year": "",
         "wine_name": "",
@@ -66,6 +66,7 @@ const Bottle = () => {
         } catch (e) {
             return
         }
+        setMessageOpen(false);
     }, [technicalForm])
 
 
@@ -78,7 +79,7 @@ const Bottle = () => {
             if (technicalForm[requiredFields[i]] === "") {
                 const str = requiredFields[i];
                 setError(`${str.split("_").map(str => str[0].toLocaleUpperCase() + str.slice(1)).join(" ")} is required!`);
-                setMessageOpen(true);
+                //setMessageOpen(true);
                 throw Error()
             }
         }
@@ -249,8 +250,8 @@ const Bottle = () => {
                 </div>
             </div>
         </div>
-        <Snackbar open={messageOpen} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+        <Snackbar open={messageOpen} autoHideDuration={99999999999}>
+            <Alert severity="warning" sx={{ width: '100%' }}>
                 {error}
             </Alert>
         </Snackbar>
