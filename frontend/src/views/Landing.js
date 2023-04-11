@@ -36,6 +36,13 @@ export default function Landing() {
     const [wineryName, setWineryName] = useState("");
     const [year, setYear] = useState("");
 
+    const [customFilters, setCustomFilters] = useState({
+        Alc: undefined,
+        Ph: undefined,
+        Soils: undefined,
+        CasesProduced: undefined
+    });
+
     /* Error Handling */
     const [error, setError] = useState(null);
 
@@ -173,10 +180,12 @@ export default function Landing() {
         fetchFilters();
     }, [apiOrigin]);
 
+    const customOptions = ['Under 100', '100-500', '500-1000', '1000+']
+
 
     /* Loads the Search Box on top of the grid elements.*/
     return <>
-        {!error && grid.length < 1 && !filters ? <Loading/> :
+        {!error && grid.length < 1 && !filters ? <Loading /> :
             <div className="landingContainer">
                 <div className="searchContainer">
                     <div className="searchCardText">
@@ -184,10 +193,10 @@ export default function Landing() {
                         <div className="defaultSearch">
                             {/* Search Box */}
                             <div className="searchBarContainer">
-                                <img className="searchIcon" src={searchIcon} alt="Search Icon"/>
+                                <img className="searchIcon" src={searchIcon} alt="Search Icon" />
                                 <input className="searchBar" placeholder="Search by Wine Name or Varietal" type="text"
                                        name="keywords"
-                                       value={keywords} onChange={x => setKeywords(x.target.value)}/>
+                                       value={keywords} onChange={x => setKeywords(x.target.value)} />
                             </div>
                             {/* Submits the Form */}
                             <button className="primaryButton narrow mediumPurple" onClick={search}>Search</button>
@@ -201,7 +210,7 @@ export default function Landing() {
                             <div className="advancedSearchMenu" onClick={toggleAdvancedMenu}>Advanced Search <img
                                 className="arrowIcon"
                                 alt="Display Advanced Search Options"
-                                src={arrowDown}/>
+                                src={arrowDown} />
                             </div>
                             <div className={toggle ? "advancedSearchOptions" : "advancedSearchOptions hidden"}>
                                 {/* Varietal Selections */}
@@ -231,6 +240,23 @@ export default function Landing() {
                                                                                               value={element}>{element}</option>)}
                                     </select>
                                 </div>
+                                {/* Custom Selections */}
+                                {
+                                    Object.keys(customFilters).map((key) => {
+                                        return <div className="selectContainer" key={key}>
+                                            <select className="selectDropdown" name={key} value={customFilters[key]}
+                                                    onChange={x => setCustomFilters({
+                                                        ...customFilters,
+                                                        [key]: x.target.value
+                                                    })}>
+                                                <option value="">- {key} -</option>
+                                                {customOptions.map((element) => <option key={element}
+                                                                                        value={element}>{element}</option>)}
+                                            </select>
+                                        </div>
+                                    })
+                                }
+
                             </div>
                         </div>
                         <div className="surpriseMe">
@@ -244,7 +270,7 @@ export default function Landing() {
                 {grid.map((element) => <Link to={element.clientURL} key={element.file}>
                     <div className="wineGridItem"><img
                         src={element.thumbnail} width={techsheetThumbnailSize} height={techsheetThumbnailSize}
-                        alt={`${element.filename} Winesheet`}/>
+                        alt={`${element.filename} Winesheet`} />
                     </div>
                 </Link>)}</div>}
     </>
