@@ -14,14 +14,14 @@ const Bottle = () => {
     const [filters, setFilters] = useState({});
     const [error, setError] = useState('');
     const {apiOrigin} = getConfig();
-    const [messageOpen, setMessageOpen] = useState(false);
+    const [messageOpen, setMessageOpen] = useState(true);
 
     const handleClose = () => {
         setMessageOpen(false);
     }
 
     const [technicalForm, setTechnicalForm] = useState({
-        "winery_name": "",
+        // "winery_name": "",
         "winery_id": "",
         "year": "",
         "wine_name": "",
@@ -61,8 +61,30 @@ const Bottle = () => {
 
     useEffect(() => {fetchFilters()}, [])
 
+    useEffect(() => {
+        try {
+            check()
+        } catch (e) {
+            return
+        }
+        setMessageOpen(false);
+    }, [technicalForm])
+
 
     if (!isAuthenticated) return (<div>No access</div>)
+
+
+
+    const check = () => {
+        for(let i = 0; i < requiredFields.length; i++) {
+            if (technicalForm[requiredFields[i]] === "") {
+                const str = requiredFields[i];
+                setError(`${str.split("_").map(str => str[0].toLocaleUpperCase() + str.slice(1)).join(" ")} is required!`);
+                //setMessageOpen(true);
+                throw Error()
+            }
+        }
+    }
 
     async function submit_wine() {
         let formData = new FormData();
@@ -76,13 +98,10 @@ const Bottle = () => {
         formData.append("file", selectedFile);
         formData.append("technicalForm", JSON.stringify(technicalForm));
         formData.append("wine_name", JSON.stringify(wineName));
-        for(let i = 0; i < requiredFields.length; i++) {
-            if (technicalForm[requiredFields[i]] === "") {
-                const str = requiredFields[i];
-                setError(`${str.split("_").map(str => str[0].toLocaleUpperCase() + str.slice(1)).join(" ")} is required!`);
-                setMessageOpen(true);
-                return;
-            }
+        try {
+            check()
+        } catch (e) {
+            return;
         }
 
         if (type === 'add'){
@@ -232,8 +251,8 @@ const Bottle = () => {
                 </div>
             </div>
         </div>
-        <Snackbar open={messageOpen} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+        <Snackbar open={messageOpen} autoHideDuration={99999999999}>
+            <Alert severity="warning" sx={{ width: '100%' }}>
                 {error}
             </Alert>
         </Snackbar>
