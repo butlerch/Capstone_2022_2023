@@ -51,7 +51,6 @@ cursor = db.cursor()
 app.register_blueprint(user.bp)
 app.register_blueprint(admin_api.bp)
 
-
 def make_a_returnable_single(query_results, colnames, num_bottles):
     '''
     This function helps build a json object
@@ -114,9 +113,9 @@ def home():
             '''
 
 
-@app.route('/search',
-           methods=['GET'])  # TODO: will need another set of eyes to help me figure out how to make this one faster
-def search():
+# @app.route('/search',
+#            methods=['GET'])  # TODO: will need another set of eyes to help me figure out how to make this one faster
+# def search():
     '''
     This function returns a bottle data based on search parameters. If none are
     specified, it returns everything in the table
@@ -129,7 +128,6 @@ def search():
     year = request.args.getlist('year')
     varietals = request.args.getlist('varietals')
     keywords = request.args.getlist('keywords')
-
     params_exist = False
     if bottle_id or winery_name or soils or year or varietals or keywords:
         params_exist = True
@@ -184,7 +182,83 @@ def search():
         abort(404)
     colnames = [desc[0] for desc in cursor.description]
     return make_a_returnable_multiple(query_results, colnames)
-
+@app.route('/search',
+           methods=['GET'])
+def search_wine_with_mutiple():
+    params_dict = {}
+    params_list = []
+    query_sql = "select * from bottle_data"
+    wine_name = request.args.get("wineName")
+    if wine_name is not None:
+        params_list.append("wine_name")
+        params_dict["wine_name"] = wine_name
+    varietals = request.args.get("varietals")
+    if varietals is not None:
+        params_list.append("varietals")
+        params_dict["varietals"] = varietals
+    winery_name = request.args.get("wineryName")
+    if winery_name is not None:
+        params_list.append("winery_name")
+        params_dict["winery_name"] = winery_name
+    year = request.args.get("year")
+    if year is not None:
+        params_list.append("year")
+        params_dict["year"] = year
+    Alc = request.args.get("Alc")
+    if Alc is not None:
+        params_list.append("pct_alcohol")
+        params_dict["pct_alcohol"] = Alc
+    Ph = request.args.get("Ph")
+    if Ph is not None:
+        params_list.append("ph")
+        params_dict["ph"] = Ph
+    Soils = request.args.get("Soils")
+    if Soils is not None:
+        params_list.append("soils")
+        params_dict["soils"] = Soils
+    cases_produced = request.args.get("CasesProduced")
+    if cases_produced is not None:
+        params_list.append("cases_produced")
+        params_dict["cases_produced"] = cases_produced
+    if len(params_dict) != 0:
+        sql_str = " where "
+        if len(params_dict) == 1:
+            for key, value in params_dict.items():
+                if key != "cases_produced":
+                    sql_str += key + " like '%{}%'".format(value)
+                else:
+                    start = cases_produced.split("-")[0]
+                    end = cases_produced.split("-")[1]
+                    sql_str += key + ">= {}".format(start) + " and " + key + "<= {}".format(end)
+        else:
+            for key in params_list:
+                _index = params_list.index(key) + 1
+                if _index != len(params_list):
+                    if key != "cases_produced":
+                        sql_str += key + " like '%{}%' and ".format(params_dict[key])
+                    else:
+                        start = cases_produced.split("-")[0]
+                        end = cases_produced.split("-")[1]
+                        sql_str += key + ">= {}".format(start) + " and " + key + "<= {} and".format(end)
+                else:
+                    if key != "cases_produced":
+                        sql_str += key + " like '%{}%' ".format(params_dict[key])
+                    else:
+                        start = cases_produced.split("-")[0]
+                        end = cases_produced.split("-")[1]
+                        sql_str += key + ">= {}".format(start) + " and " + key + "<= {}".format(end)
+        query_sql += sql_str
+    print(query_sql)
+    cursor.execute(query_sql)
+    res = cursor.fetchall()
+    res_list = []
+    for i in res:
+        res_dict = {"bottle_id": i[0], "winery_name": i[1], "winery_id": i[2], "year": i[3], "wine_name": i[4],
+                    "pct_alcohol": i[5], "ta": i[6], "ph": i[7], "soils": i[8], "varietals": i[9], "clones": i[10],
+                    "clusters": i[11], "aging_process": i[12], "cases_produced": i[13], "source_file": i[14],
+                    "run_date": i[15], "description": i[16]}
+        res_list.append(res_dict)    
+    return res_list
 
 @app.route('/random', methods=['GET'])
 def random_bottle_data():
@@ -374,7 +448,7 @@ def varietal_names_in_bottle_data():
                 returnable.append(varietal.strip())
     return jsonify({"varietals": returnable})
 
-
+# 
 @app.route('/listOfWineries', methods=['GET'])
 def list_of_wineries():
     '''
@@ -385,7 +459,7 @@ def list_of_wineries():
     if len(query_results) < 1:
         abort(404)
     returnable = [''.join(query_result) for query_result in query_results]
-    return jsonify({"wineries": returnable})
+    return jsonify({"wineries": returnable}) 
 
 
 @app.route('/bottleNames', methods=['GET'])
@@ -467,7 +541,110 @@ def wineries():
     returnable = [''.join(query_result) for query_result in query_results]
     return jsonify({"wineries": returnable})
 
+###############################################################################
 
+# 添加或取消喜欢的酒厂
+@app.route("/addOrCancelFavWineries",methods=["POST"])
+def add_or_cancel_fav_wineries():
+    body = request.json
+    user_id = body["userId"]
+    winery_id = body["wineryId"]
+    cursor.execute("select * from favorite_winery where user_id ={} and fav_winery = {}".format(user_id,winery_id))
+    res = cursor.fetchall()
+    print(res)
+    # 删除该记录
+    if len(res) != 0:
+        cursor.execute("delete from favorite_winery where user_id = {} and fav_winery={}".format(user_id,winery_id))
+        db.commit()
+        response = {
+            "code":200,
+            "msg":"action successfully"
+        }
+        return response
+    # 增加记录
+    else:
+        cursor.execute("insert into favorite_winery (user_id,fav_winery) values ({},{})".format(user_id, winery_id))
+        db.commit()
+        response = {
+            "code": 200,
+            "msg": "action successfully"
+        }
+        return response
+@app.route("/listFavWineries",methods=["GET"])
+def list_fav_wineries():
+    user_id = request.args.get("userId")
+    cursor.execute("select * from favorite_winery where user_id = {}".format(user_id))
+    res = cursor.fetchall()
+    arr = []
+    for i in res:
+        winery_id = i[1]
+        cursor.execute("select winery_name from winery_data where winery_id = {}".format(winery_id))
+        winery_names = cursor.fetchall()
+        arr.append(winery_names[0][0])
+    return arr
+@app.route("/addOrCancelFavQualities",methods=["POST"])
+def add_or_cancel_fav_qualities():
+    body = request.json
+    user_id = body["userId"]
+    wine_id = body["wineId"]
+    qualitStr = body["qualityStr"]
+    cursor.execute("select * from favorite_quality where user_id = {} and fav_wine = {} and fav_quality_str = '{}'".format(user_id,wine_id,qualitStr))
+    res = cursor.fetchall()
+    if len(res) != 0:
+        cursor.execute("delete from favorite_quality  where user_id ={} and fav_wine ={} and fav_quality_str = '{}'".format(user_id,wine_id,qualitStr))
+        db.commit()
+        response = {
+            "code": 200,
+            "msg": "action successfully"
+        }
+        return response
+    else:
+        cursor.execute("insert into favorite_quality (user_id,fav_wine,fav_quality_str) values({},{},'{}')".format(user_id,wine_id,qualitStr))
+        db.commit()
+        response = {
+            "code": 200,
+            "msg": "action successfully"
+        }
+        return response
+@app.route("/listFavQualities",methods=["GET"])
+def list_fav_qualities():
+    user_id = request.args.get("userId")
+    cursor.execute("select * from favorite_quality where user_id = {}".format(user_id))
+    res = cursor.fetchall()
+    response = {}
+    for i in res:
+        wine_id = i[1]
+        quality_str = i[2]
+        cursor.execute("select {} from bottle_data where bottle_id ={}".format(quality_str,wine_id))
+        qualities_res = cursor.fetchall()
+        response[quality_str] =qualities_res[0][0]
+    return response
+# alc, ph, soils, cases produced
+@app.route("/searchWineWithQuality")
+def searchWineWithQuality():
+    sql_str = "select * from bottle_data where "
+    if len(request.args) == 0:
+        return {"msg":"invalid params","code":444}
+    if request.args.get("alc") != None:
+        sql_str += "pct_alcohol='{}' ".format(request.args.get("alc"))
+    if request.args.get("ph") != None:
+        sql_str += "and ph='{}' ".format(request.args.get("ph"))
+    if request.args.get("soils") != None:
+        sql_str += "and soils='{}'".format(request.args.get("soils"))
+    if request.args.get("produced") != None:
+        produced_va = request.args.get("produced")     
+        start_va = produced_va.split("-")[0]
+        end_va = produced_va.split("-")[1]
+        sql_str += "and cases_produced >= {} and cases_produced <={}".format(start_va,end_va)        
+    cursor.execute(sql_str)
+    query_res = cursor.fetchall()
+    return  query_res
+
+
+
+
+
+ 
 ###############################################################################
 
 @app.errorhandler(404)
