@@ -39,7 +39,7 @@ import Winery from "./views/Admin/Winery";
 // Auth0 Configuration
 const onRedirectCallback = (appState) => {
     history.push(
-        appState && appState.returnTo ? appState?.returnTo : window?.location?.pathname
+        appState && appState.returnTo ? appState.returnTo : window.location.pathname
     );
 };
 
@@ -49,7 +49,7 @@ const providerConfig = {
     domain: config.domain,
     clientId: config.clientId,
     ...(config.audience ? {audience: config.audience} : null),
-    redirectUri: window.location?.origin,
+    redirectUri: window.location.origin,
     onRedirectCallback,
 };
 
