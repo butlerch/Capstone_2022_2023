@@ -33,10 +33,10 @@ export default function Tabs() {
     const handleClose = () => {
         setOpen(false);
     };
-    const changeName = (e) => {
+    const changeNmae = (e) => {
         setName(e.target.value);
     };
-    const changePassword = (e) => {
+    const chagnePassword = (e) => {
         setPassword(e.target.value);
     };
     const submit = () => {
@@ -135,7 +135,7 @@ export default function Tabs() {
                                     id="outlined-basic"
                                     label="Name"
                                     variant="outlined"
-                                    onChange={changeName}
+                                    onChange={changeNmae}
                                 />
                             </div>
                             <div className="form_item">
@@ -144,7 +144,7 @@ export default function Tabs() {
                                     label="Password"
                                     variant="outlined"
                                     type="password"
-                                    onChange={changePassword}
+                                    onChange={chagnePassword}
                                 />
                             </div>
                         </div>
