@@ -11,7 +11,6 @@ import axios from 'axios';
 import "./App.css";
 import NavTop from "./components/navbar/NavTop";
 import NavBottom from "./components/navbar/NavBottom";
-import Loading from "./components/Loading";
 import Error from "./components/Error";
 
 export default function App() {
@@ -44,7 +43,7 @@ export default function App() {
             <div className="navigationSpacer"></div>
             <div id="contentBlock">
                 {/* Displays either an error screen, the loading screen, or the appropriate view.*/}
-                {error && <Error error={error} /> }
+                {error && <Error error={error} />}
                 <Outlet style={{display: isLoading ? 'none' : 'block'}} />
             </div>
             <NavBottom />

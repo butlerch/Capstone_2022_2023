@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom";
 const Admin = () => {
     const navigate = useNavigate();
     const {isAuthenticated} = useAuth0();
-    if(!isAuthenticated) return (<div>No access</div>)
+    if (!isAuthenticated) return (<div>No access</div>)
 
     const navigateTo = (path) => {
         console.log(path)

@@ -23,7 +23,7 @@ export default function SearchResult({wine}) {
             </div>
             <div className="wineSearchResultThumbnailContainer">
                 <img src={filePaths.thumbnail} className="wineSearchResultThumbnail"
-                     alt="Techsheet Thumbnail Preview"/>
+                     alt="Techsheet Thumbnail Preview" />
             </div>
         </div>
     </Link></>

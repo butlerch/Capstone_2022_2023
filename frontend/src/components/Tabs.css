@@ -1,51 +1,59 @@
 .tabs {
-  width: 100%;
-  display: flex;
-  justify-content: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
+
 .tabs .tabs_region {
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 5%;
-  background-color: #fff;
-  padding: 50px 30px;
-  display: flex;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 5%;
+    background-color: #fff;
+    padding: 50px 30px;
+    display: flex;
 }
 
 .tabs .tabs_region .nav {
-  width: 150px;
-  margin-right: 50px;
+    width: 150px;
+    margin-right: 50px;
 }
+
 .tabs .tabs_region .nav .nav_active {
-  opacity: 0.7;
+    opacity: 0.7;
 }
+
 .tabs .tabs_region .nav .nav_item {
-  font-weight: 600;
-  color: #3f1b70;
-  margin-bottom: 20px;
-  cursor: pointer;
+    font-weight: 600;
+    color: #3f1b70;
+    margin-bottom: 20px;
+    cursor: pointer;
 }
+
 .tabs .tabs_region .body {
-  flex: 1;
-  /* background-color: pink; */
+    flex: 1;
+    /* background-color: pink; */
 }
-.adminLoing{
-  width: 500px;
-  height: 300px;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
+
+.adminLoing {
+    width: 500px;
+    height: 300px;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
 }
-.adminLoing .form{
-  width: 90%;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
+
+.adminLoing .form {
+    width: 90%;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
 }
-.adminLoing .form .form_item{
-  width: 100%;
-  margin-bottom: 20px;
+
+.adminLoing .form .form_item {
+    width: 100%;
+    margin-bottom: 20px;
 }
-.MuiTextField-root{
-  width: 100%;
+
+.MuiTextField-root {
+    width: 100%;
 }
