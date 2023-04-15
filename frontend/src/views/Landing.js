@@ -210,8 +210,7 @@ export default function Landing() {
 
     /* Loads the Search Box on top of the grid elements.*/
     return <>
-        {!error && grid.length < 1 && !filters ? <Loading/> :
-            <div className="landingContainer">
+            <div className="landingContainer" style={{display : !error && grid.length < 1 && !filters ? 'none' : 'grid'}}>
                 <div className="searchContainer">
                     <div className="searchCardText">
                         <div className="searchCardTitle title">Search wine techsheets!</div>
@@ -316,6 +315,6 @@ export default function Landing() {
                         src={element.thumbnail} width={techsheetThumbnailSize} height={techsheetThumbnailSize}
                         alt={`${element.filename} Winesheet`}/>
                     </div>
-                </Link>)}</div>}
+                </Link>)}</div>
     </>
 }

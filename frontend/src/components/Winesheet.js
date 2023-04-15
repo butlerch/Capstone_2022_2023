@@ -76,7 +76,7 @@ export default function Winesheet() {
         data.push("winery_name" + values);
       }
     });
-    
+
     for (let key in res2) {
       console.log('value',(res2[key]+'').trim());
       let myvalue = (res2[key]+'').trim();
@@ -157,7 +157,7 @@ export default function Winesheet() {
         if (res.code === 200) {
           openMsg(
             "success",
-            "success" 
+            "success"
           );
           getFavorites();
         } else {
@@ -324,8 +324,7 @@ export default function Winesheet() {
       </Snackbar>
       {/* end */}
       <div className="winesheetPageCard">
-        {overview && filePaths && technicalData && neighbors ? (
-          <>
+          <div style={{display: overview && filePaths && technicalData && neighbors ? 'block' : 'none'  }}>
             <div className="winesheetPageCardItems">
               {/* Navigation Arrow (Desktop) */}
               <div className="navArrow">
@@ -485,12 +484,8 @@ export default function Winesheet() {
                 </Link>
               </div>
             </div>
-          </>
-        ) : (
-          <>
-            <Loading />
-          </>
-        )}
+          </div>
+
       </div>
     </div>
   );

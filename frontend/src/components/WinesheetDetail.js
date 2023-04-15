@@ -11,7 +11,7 @@ export default function WinesheetDetail() {
         <div className="title">{desc.title}</div>
         <div className="body">
           <div className="left">
-            <img src={desc.thumbnail}></img>
+            <img alt='Winesheet' src={desc.thumbnail}></img>
           </div>
           <div className="right">
            {desc.title}
