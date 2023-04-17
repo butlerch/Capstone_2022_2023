@@ -289,7 +289,7 @@ def techsheets_by_id(bottle_id):
     '''
 
     cursor.execute(
-        "SELECT * FROM bottle_data WHERE bottle_id = '{}';".format(bottle_id))
+        "SELECT a.*,b.winery_url FROM bottle_data AS a RIGHT JOIN winery_data AS b ON a.winery_name = b.winery_name WHERE a.bottle_id = {};".format(bottle_id))
     query_results = cursor.fetchall()
 
     if len(query_results) != 1:
