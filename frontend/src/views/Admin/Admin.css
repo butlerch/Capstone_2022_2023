@@ -5,7 +5,7 @@
     margin: auto;
 }
 
-.mainArea .adminButton{
+.mainArea .adminButton {
     background: #3e2279;
     padding: 3rem 1rem;
     width: auto;
@@ -14,12 +14,12 @@
     color: white;
 }
 
-.admin#contentBlock{
+.admin#contentBlock {
     background: white;
     display: flex;
     justify-content: center;
 }
 
-.mainArea .adminButton:hover{
+.mainArea .adminButton:hover {
     cursor: pointer;
 }

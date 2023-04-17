@@ -1,6 +1,7 @@
 import axios from "axios";
-import { getConfig } from "../config/config";
-const { apiOrigin, audience, scope } = getConfig();
+import {getConfig} from "../config/config";
+
+const {apiOrigin, audience, scope} = getConfig();
 
 const request = axios.create({
 
@@ -11,22 +12,22 @@ const request = axios.create({
 
 request.interceptors.request.use((config) => {
 
-  let token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+    let token = localStorage.getItem("token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
 });
 
 request.interceptors.response.use(
-  (res) => {
+    (res) => {
 
-    return res.data;
-  },
-  (err) => {
+        return res.data;
+    },
+    (err) => {
 
-    return err.response.data;
-  }
+        return err.response.data;
+    }
 );
 
 export default request;

@@ -13,7 +13,7 @@ export default function AccessoryPage({title, subtitle, children}) {
     return <div className="accessoryPageContainer">
         <div className="accessoryCard">
             <div className="accessoryHeader">
-                <p><span className="title">{title !== undefined ? title : ""}</span><br/>
+                <p><span className="title">{title !== undefined ? title : ""}</span><br />
                     <span className="subtitle">{subtitle !== undefined ? subtitle : ""}</span></p>
             </div>
             <div className="text">

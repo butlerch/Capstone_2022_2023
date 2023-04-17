@@ -8,7 +8,6 @@ import axios from "axios";
 
 // Style & Components
 import './Landing.css';
-import Loading from "../components/Loading";
 import "../components/TextStyles.css";
 import "../components/SearchBox.css";
 import "../components/DropdownSelect.css";
@@ -35,14 +34,14 @@ export default function Landing() {
     const [varietal, setVarietal] = useState("");
     const [wineryName, setWineryName] = useState("");
     const [year, setYear] = useState("");
-    const [alcs,setAlc] = useState([]);
-    const [phs,setPh] = useState([]);
-    const [soils,setSoils] = useState([]);
-    const [casesProduceds,setCasesProduced] = useState([
+    const [alcs, setAlc] = useState([]);
+    const [phs, setPh] = useState([]);
+    const [soils, setSoils] = useState([]);
+    const [casesProduceds, setCasesProduced] = useState([
         '100',
-    '100-500',
-    '500-1000',
-    "1000+"
+        '100-500',
+        '500-1000',
+        "1000+"
     ])
     /* Error Handling */
     const [error, setError] = useState(null);
@@ -158,28 +157,28 @@ export default function Landing() {
             }
             let ph = 2.5;
             let data = []
-            while(ph <= 4){
+            while (ph <= 4) {
                 data.push(Number(ph.toFixed(2)));
                 ph += 0.1;
-                if(Number(ph.toFixed(2))<=4){
+                if (Number(ph.toFixed(2)) <= 4) {
                     setPh(data);
                 }
             }
             let alc = 0;
             let data2 = []
-            while(alc <= 100){
-                data2.push(alc+'%');
+            while (alc <= 100) {
+                data2.push(alc + '%');
                 alc += 1;
-                if(alc <= 100){
+                if (alc <= 100) {
                     setAlc(data2);
                 }
             }
             let soil = 0;
             let data3 = []
-            while(soil <= 100){
+            while (soil <= 100) {
                 data3.push(soil);
                 soil += 1;
-                if(soil <= 100){
+                if (soil <= 100) {
                     setSoils(data3);
                 }
             }
@@ -210,112 +209,111 @@ export default function Landing() {
 
     /* Loads the Search Box on top of the grid elements.*/
     return <>
-        {!error && grid.length < 1 && !filters ? <Loading/> :
-            <div className="landingContainer">
-                <div className="searchContainer">
-                    <div className="searchCardText">
-                        <div className="searchCardTitle title">Search wine techsheets!</div>
-                        <div className="defaultSearch">
-                            {/* Search Box */}
-                            <div className="searchBarContainer">
-                                <img className="searchIcon" src={searchIcon} alt="Search Icon"/>
-                                <input className="searchBar" placeholder="Search by Wine Name or Varietal" type="text"
-                                       name="keywords"
-                                       value={keywords} onChange={x => setKeywords(x.target.value)}/>
-                            </div>
-                            {/* Submits the Form */}
-                            <button className="primaryButton narrow mediumPurple" onClick={search}>Search</button>
-
-
+        <div className="landingContainer" style={{display: !error && grid.length < 1 && !filters ? 'none' : 'grid'}}>
+            <div className="searchContainer">
+                <div className="searchCardText">
+                    <div className="searchCardTitle title">Search wine techsheets!</div>
+                    <div className="defaultSearch">
+                        {/* Search Box */}
+                        <div className="searchBarContainer">
+                            <img className="searchIcon" src={searchIcon} alt="Search Icon" />
+                            <input className="searchBar" placeholder="Search by Wine Name or Varietal" type="text"
+                                   name="keywords"
+                                   value={keywords} onChange={x => setKeywords(x.target.value)} />
                         </div>
-                        {/* If there's an error, displays the error. */}
-                        <div className={error == null ? "searchError hidden" : "searchError"}>{error}</div>
-                        {/* Advanced Search */}
-                        <div className="advancedSearch">
-                            <div className="advancedSearchMenu" onClick={toggleAdvancedMenu}>Advanced Search <img
-                                className="arrowIcon"
-                                alt="Display Advanced Search Options"
-                                src={arrowDown}/>
-                            </div>
-                            <div className={toggle ? "advancedSearchOptions" : "advancedSearchOptions hidden"}>
-                                {/* Varietal Selections */}
-                                <div className="selectContainer" alt="Select a Wine Varietal">
-                                    <select className="selectDropdown" name="varietal" value={varietal}
-                                            onChange={x => setVarietal(x.target.value)}>
-                                        <option value="">- Wine Varietal -</option>
-                                        {filters && filters["varietals"].map((element) => <option key={element}
-                                                                                                  value={element}>{element}</option>)}
-                                    </select>
-                                </div>
-                                {/* Winery Selections */}
-                                <div className="selectContainer" alt="Select a Winery">
-                                    <select className="selectDropdown" name="wine" value={wineryName}
-                                            onChange={x => setWineryName(x.target.value)}>
-                                        <option value="">- Winery -</option>
-                                        {filters && filters["wineries"].map((element) => <option key={element}
-                                                                                                 value={element}>{element}</option>)}
-                                    </select>
-                                </div>
-                                {/* Year Selections */}
-                                <div className="selectContainer">
-                                    <select className="selectDropdown" name="year" value={year}
-                                            onChange={x => setYear(x.target.value)}>
-                                        <option value="">- Vintage Year -</option>
-                                        {filters && filters["years"].map((element) => <option key={element}
+                        {/* Submits the Form */}
+                        <button className="primaryButton narrow mediumPurple" onClick={search}>Search</button>
+
+
+                    </div>
+                    {/* If there's an error, displays the error. */}
+                    <div className={error == null ? "searchError hidden" : "searchError"}>{error}</div>
+                    {/* Advanced Search */}
+                    <div className="advancedSearch">
+                        <div className="advancedSearchMenu" onClick={toggleAdvancedMenu}>Advanced Search <img
+                            className="arrowIcon"
+                            alt="Display Advanced Search Options"
+                            src={arrowDown} />
+                        </div>
+                        <div className={toggle ? "advancedSearchOptions" : "advancedSearchOptions hidden"}>
+                            {/* Varietal Selections */}
+                            <div className="selectContainer" alt="Select a Wine Varietal">
+                                <select className="selectDropdown" name="varietal" value={varietal}
+                                        onChange={x => setVarietal(x.target.value)}>
+                                    <option value="">- Wine Varietal -</option>
+                                    {filters && filters["varietals"].map((element) => <option key={element}
                                                                                               value={element}>{element}</option>)}
-                                    </select>
-                                </div>
-                                 {/* Varietal Selections */}
-                                 <div className="selectContainer" alt="Select a Wine Varietal">
-                                    <select className="selectDropdown" name="varietal" value={varietal}
-                                            onChange={x => setVarietal(x.target.value)}>
-                                        <option value="">- Alc -</option>
-                                        {alcs.map((element) => <option key={element}
-                                                                                                  value={element}>{element}</option>)}
-                                    </select>
-                                </div>
-                                 {/* Varietal Selections */}
-                                 <div className="selectContainer" alt="Select a Wine Varietal">
-                                    <select className="selectDropdown" name="varietal" value={varietal}
-                                            onChange={x => setVarietal(x.target.value)}>
-                                        <option value="">- Ph -</option>
-                                        {phs && phs.map((element) => <option key={element}
-                                                                                                  value={element}>{element}</option>)}
-                                    </select>
-                                </div>
-                                 {/* Varietal Selections */}
-                                 <div className="selectContainer" alt="Select a Wine Varietal">
-                                    <select className="selectDropdown" name="varietal" value={varietal}
-                                            onChange={x => setVarietal(x.target.value)}>
-                                        <option value="">- Soils -</option>
-                                        {soils.map((element) => <option key={element}
-                                                                                                  value={element}>{element}</option>)}
-                                    </select>
-                                </div>
-                                 {/* Varietal Selections */}
-                                 <div className="selectContainer" alt="Select a Wine Varietal">
-                                    <select className="selectDropdown" name="varietal" value={varietal}
-                                            onChange={x => setVarietal(x.target.value)}>
-                                        <option value="">- Cases Produced -</option>
-                                        {casesProduceds.map((element) => <option key={element}
-                                                                                                  value={element}>{element}</option>)}
-                                    </select>
-                                </div>
+                                </select>
+                            </div>
+                            {/* Winery Selections */}
+                            <div className="selectContainer" alt="Select a Winery">
+                                <select className="selectDropdown" name="wine" value={wineryName}
+                                        onChange={x => setWineryName(x.target.value)}>
+                                    <option value="">- Winery -</option>
+                                    {filters && filters["wineries"].map((element) => <option key={element}
+                                                                                             value={element}>{element}</option>)}
+                                </select>
+                            </div>
+                            {/* Year Selections */}
+                            <div className="selectContainer">
+                                <select className="selectDropdown" name="year" value={year}
+                                        onChange={x => setYear(x.target.value)}>
+                                    <option value="">- Vintage Year -</option>
+                                    {filters && filters["years"].map((element) => <option key={element}
+                                                                                          value={element}>{element}</option>)}
+                                </select>
+                            </div>
+                            {/* Varietal Selections */}
+                            <div className="selectContainer" alt="Select a Wine Varietal">
+                                <select className="selectDropdown" name="varietal" value={varietal}
+                                        onChange={x => setVarietal(x.target.value)}>
+                                    <option value="">- Alc -</option>
+                                    {alcs.map((element) => <option key={element}
+                                                                   value={element}>{element}</option>)}
+                                </select>
+                            </div>
+                            {/* Varietal Selections */}
+                            <div className="selectContainer" alt="Select a Wine Varietal">
+                                <select className="selectDropdown" name="varietal" value={varietal}
+                                        onChange={x => setVarietal(x.target.value)}>
+                                    <option value="">- Ph -</option>
+                                    {phs && phs.map((element) => <option key={element}
+                                                                         value={element}>{element}</option>)}
+                                </select>
+                            </div>
+                            {/* Varietal Selections */}
+                            <div className="selectContainer" alt="Select a Wine Varietal">
+                                <select className="selectDropdown" name="varietal" value={varietal}
+                                        onChange={x => setVarietal(x.target.value)}>
+                                    <option value="">- Soils -</option>
+                                    {soils.map((element) => <option key={element}
+                                                                    value={element}>{element}</option>)}
+                                </select>
+                            </div>
+                            {/* Varietal Selections */}
+                            <div className="selectContainer" alt="Select a Wine Varietal">
+                                <select className="selectDropdown" name="varietal" value={varietal}
+                                        onChange={x => setVarietal(x.target.value)}>
+                                    <option value="">- Cases Produced -</option>
+                                    {casesProduceds.map((element) => <option key={element}
+                                                                             value={element}>{element}</option>)}
+                                </select>
                             </div>
                         </div>
-                        <div className="surpriseMe">
-                            <Link
-                                to={randomWinesheetPath}
-                                className="primaryButton big darkPurple">Surprise Me?!</Link>
-                        </div>
+                    </div>
+                    <div className="surpriseMe">
+                        <Link
+                            to={randomWinesheetPath}
+                            className="primaryButton big darkPurple">Surprise Me?!</Link>
                     </div>
                 </div>
-                {/* If the server query was successful, display the winesheets landing-page grid.*/}
-                {grid.map((element) => <Link to={element.clientURL} key={element.file}>
-                    <div className="wineGridItem"><img
-                        src={element.thumbnail} width={techsheetThumbnailSize} height={techsheetThumbnailSize}
-                        alt={`${element.filename} Winesheet`}/>
-                    </div>
-                </Link>)}</div>}
+            </div>
+            {/* If the server query was successful, display the winesheets landing-page grid.*/}
+            {grid.map((element) => <Link to={element.clientURL} key={element.file}>
+                <div className="wineGridItem"><img
+                    src={element.thumbnail} width={techsheetThumbnailSize} height={techsheetThumbnailSize}
+                    alt={`${element.filename} Winesheet`} />
+                </div>
+            </Link>)}</div>
     </>
 }

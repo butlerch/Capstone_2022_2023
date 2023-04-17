@@ -1,71 +1,83 @@
 .dashboard {
-  width: 100%;
-  display: flex;
-  justify-content: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
+
 .dashboard .dashboard_region {
-  max-width: 1200px;
-  width: 100%;
-  background-color: #fff;
-  margin: 0 5%;
-  padding: 50px 30px;
+    max-width: 1200px;
+    width: 100%;
+    background-color: #fff;
+    margin: 0 5%;
+    padding: 50px 30px;
 }
+
 .dashboard .dashboard_region .title {
-  display: flex;
+    display: flex;
 }
+
 .dashboard .dashboard_region .title .left {
-  width: 170px;
-  color: #8162b5;
-  font-size: 18px;
-  margin-right: 20px;
+    width: 170px;
+    color: #8162b5;
+    font-size: 18px;
+    margin-right: 20px;
 }
+
 .dashboard .dashboard_region .dashboard_com {
-  display: flex;
+    display: flex;
 }
+
 .dashboard .dashboard_region .dashboard_com .left {
-  width: 170px;
-  margin-right: 20px;
+    width: 170px;
+    margin-right: 20px;
 }
+
 .dashboard .dashboard_region .dashboard_com .left .oprater_active {
-  margin: 5px 0;
-  padding: 5px 0;
-  background-color: #c4eeff;
-  border: 2px solid #99e1ff;
-  color: #4454a0;
-  font-weight: 800;
-  text-align: center;
-  cursor: pointer;
+    margin: 5px 0;
+    padding: 5px 0;
+    background-color: #c4eeff;
+    border: 2px solid #99e1ff;
+    color: #4454a0;
+    font-weight: 800;
+    text-align: center;
+    cursor: pointer;
 }
+
 .dashboard .dashboard_region #dataCovans {
-  width: 400px;
-  height: 700px;
+    width: 400px;
+    height: 700px;
 }
+
 .dashboard .dashboard_region .dataList {
-  display: flex;
-  justify-content: space-between;
-  flex: 1;
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
 }
+
 .dashboard .dashboard_region .dataList .item {
-  width: 27%;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  flex-flow: column;
-  align-items: center;
-  border: 2px solid #000;
+    width: 27%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    flex-flow: column;
+    align-items: center;
+    border: 2px solid #000;
 }
+
 .dashboard .dashboard_region .dataList .item .item_text {
-  margin-top: 10px;
-  font-weight: 800;
-  color: #000000;
-  font-size: 30px;
+    margin-top: 10px;
+    font-weight: 800;
+    color: #000000;
+    font-size: 30px;
 }
+
 .dashboard .dashboard_region .dataList .item .item_desc {
-  margin-top: 50px;
-  font-size: 18px;
-  color: #000;
-  font-weight: 800;
+    margin-top: 50px;
+    font-size: 18px;
+    color: #000;
+    font-weight: 800;
 }
+
 .dashboard .dashboard_region .bd {
-  margin-top: 30px;
+    margin-top: 30px;
 }

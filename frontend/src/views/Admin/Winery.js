@@ -25,7 +25,6 @@ const Winery = () => {
     })
 
 
-
     const {apiOrigin} = getConfig();
 
     /* Fetch options to populate the dropdown menu under "Advanced Search." */
@@ -50,13 +49,13 @@ const Winery = () => {
 
     async function submit() {
         let formData = new FormData();
-        if(type === 'edit') {
+        if (type === 'edit') {
             technicalForm["winery_name"] = wineryName;
         }
         const selectedFile = document.getElementById('upload').files[0];
         formData.append("file", selectedFile);
         formData.append("technicalForm", JSON.stringify(technicalForm));
-        if (type === 'add'){
+        if (type === 'add') {
             try {
                 /* Perform a search; if successful, pass state & navigate to the "Search Results" page. */
                 const results = await axios.post(`${apiOrigin}/admin/add_winery`, formData, {
@@ -71,7 +70,8 @@ const Winery = () => {
                     /* If the response status code isn't 200 or 404, store the status code and error message. */
                     setError("Status Code " + err.response.status + ": " + err.message + "!");
                 }
-        }} else {
+            }
+        } else {
             try {
                 /* Perform a search; if successful, pass state & navigate to the "Search Results" page. */
                 const results = await axios.post(`${apiOrigin}/admin/edit_winery`, formData, {
@@ -106,9 +106,10 @@ const Winery = () => {
                         justifyContent: "space-between",
                         marginBottom: '1rem'
                     }}>
-                        <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset',transform: 'translateY(10px)'}}>
-                            { "winery_name".split('_').map(str => <span key={str}
-                                                                        style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
+                        <span className="technicalDataGridProperty"
+                              style={{fontSize: '16px', lineHeight: 'unset', transform: 'translateY(10px)'}}>
+                            {"winery_name".split('_').map(str => <span key={str}
+                                                                       style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
                         </span>
                         <div className="selectContainer" alt="Select a Winery">
                             <select className="selectDropdown technicalFormInput" name="wine" value={wineryName}
@@ -120,8 +121,9 @@ const Winery = () => {
                             </select>
                         </div>
                     </div>}
-                    {Object.keys(technicalForm).filter(i => !(i === 'winery_name')).map((element) => <div className="technicalDataGridItem"
-                                                                      key={element} style={{
+                    {Object.keys(technicalForm).filter(i => !(i === 'winery_name')).map((element) => <div
+                        className="technicalDataGridItem"
+                        key={element} style={{
                         display: 'flex',
                         flexDirection: 'row',
                         justifyContent: "space-between",
@@ -140,17 +142,17 @@ const Winery = () => {
                                                [element]: e.target.value
                                            }
                                        })
-                                   }}/> : <textarea style={{maxWidth: 520, height: '12rem', padding: '1rem'}}
-                                                    className="technicalFormInput"
-                                                    value={technicalForm[element]}
-                                                    onChange={e => {
-                                                        setTechnicalForm((prev) => {
-                                                            return {
-                                                                ...prev,
-                                                                [element]: e.target.value
-                                                            }
-                                                        })
-                                                    }}/>}
+                                   }} /> : <textarea style={{maxWidth: 520, height: '12rem', padding: '1rem'}}
+                                                     className="technicalFormInput"
+                                                     value={technicalForm[element]}
+                                                     onChange={e => {
+                                                         setTechnicalForm((prev) => {
+                                                             return {
+                                                                 ...prev,
+                                                                 [element]: e.target.value
+                                                             }
+                                                         })
+                                                     }} />}
                     </div>)}
                     <div className="technicalDataGridItem"
                          style={{
@@ -175,7 +177,7 @@ const Winery = () => {
                                 className="technicalFormInput">add from computer
                         </button>
 
-                        <input id="upload" style={{display: 'none'}} type='file'/>
+                        <input id="upload" style={{display: 'none'}} type='file' />
                     </div>
                 </div>
                 <div style={{display: "flex", textAlign: 'center', margin: '0 auto'}}>

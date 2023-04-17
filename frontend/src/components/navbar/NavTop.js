@@ -20,7 +20,7 @@ export default function NavTop() {
             {/* Logo */}
             <div className="logoContainer">
                 <Link to="/">
-                    <img src={wineLogo} className="iconButton" id="logo" alt="The Wine Logo"/>
+                    <img src={wineLogo} className="iconButton" id="logo" alt="The Wine Logo" />
                 </Link>
             </div>
 
@@ -31,11 +31,11 @@ export default function NavTop() {
                         <div className="desktop">
                             <div className="menuItem">
                                 <Link to="/profile" className="menuItem menuText">
-                                    <img src={userIcon} className="iconButton" width="25px" height="25px" alt="User Icon"/>
+                                    <img src={userIcon} className="iconButton" width="25px" height="25px" alt="User Icon" />
                                     {user.name}
                                 </Link>
                             </div>
-                            <div className="menuSpacer"/>
+                            <div className="menuSpacer" />
                             <div className="menuItem">
                                 <button className="textButton menuText desktop"
                                         onClick={() => logout({returnTo: window.location.origin})}>Log Out
@@ -48,11 +48,11 @@ export default function NavTop() {
                             <div className="menuItem">
                                 <Link to="/profile"> <img src={userIcon} width="25px" height="25px"
                                                           className="iconButton mobile"
-                                                          alt="User Icon"/></Link>
+                                                          alt="User Icon" /></Link>
                             </div>
                             <div className="menuItem">
                                 <img src={logoutIcon} width="25px" height="25px" className="iconButton mobile"
-                                     onClick={() => logout({returnTo: window.location.origin})} alt="User Icon"/>
+                                     onClick={() => logout({returnTo: window.location.origin})} alt="User Icon" />
                             </div>
                         </div>
                     </>
@@ -63,7 +63,7 @@ export default function NavTop() {
                                 <button className="textButton menuText desktop" onClick={() => loginWithRedirect()}>Log
                                     In
                                 </button>
-                                <div className="menuSpacer"/>
+                                <div className="menuSpacer" />
                             </div>
                             <div className="menuItem">
                                 <button className="textButton menuText desktop"
@@ -77,7 +77,7 @@ export default function NavTop() {
                         <div className="mobile">
                             <div className="menuItem">
                                 <img src={loginIcon} width="25px" height="25px" className="iconButton mobile"
-                                     onClick={() => loginWithRedirect()} alt="Login Button"/>
+                                     onClick={() => loginWithRedirect()} alt="Login Button" />
                             </div>
                         </div>
                     </>}

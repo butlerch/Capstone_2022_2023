@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Alert, Button, Dialog, Snackbar, TextField} from "@mui/material";
-import {  useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import "./Tabs.css";
 import UserData from "./UserData";
 
@@ -16,7 +16,7 @@ export default function Tabs() {
     const [isLogin, setIsLogin] = useState(localStorage.getItem("login"));
     const navigate = useNavigate();
     const toDashed = () => {
-    navigate("/dashboard")
+        navigate("/dashboard")
     }
     const changeType = (value) => {
         setType(value);
@@ -42,8 +42,8 @@ export default function Tabs() {
     const submit = () => {
         if (!name) return openMsg("error", "Please enter name");
         if (!password) return openMsg("error", "Please enter password");
-        if(name !== "admin") return openMsg("error","Username wrong");
-        if(password !== 'admin123') return openMsg("error","Password wrong")
+        if (name !== "admin") return openMsg("error", "Username wrong");
+        if (password !== 'admin123') return openMsg("error", "Password wrong")
         // sent request
         // axios({
         //   url: "http://localhost:9264/wine_lake_manage/admin_login",

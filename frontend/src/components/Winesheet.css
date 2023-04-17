@@ -179,11 +179,13 @@
     right: -25px;
     cursor: pointer;
 }
-.darkPurple{
-    padding: 30px!important;
+
+.darkPurple {
+    padding: 30px !important;
     border-radius: 60px;
 }
-.btn{
+
+.btn {
     width: 100%;
     display: flex;
     justify-content: flex-end;
