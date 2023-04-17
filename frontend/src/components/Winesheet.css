@@ -17,7 +17,7 @@
     background-color: #776dbe;
     padding: 5px 20px;
     border-radius: 50px;
-    transform: translateX(163px);
+    transform: translateX(60px);
 }
 
 /* Card Styling and Positioning (DESKTOP) */
@@ -165,7 +165,7 @@
 }
 
 .winesheetPageThumbnail {
-    max-width: 750px;
+    max-width: 500px;
     background: #FFFFFF;
     border: #C0C0C0 solid 2px;
     border-radius: 25px;
@@ -179,13 +179,11 @@
     right: -25px;
     cursor: pointer;
 }
-
-.darkPurple {
-    padding: 30px !important;
+.darkPurple{
+    padding: 30px!important;
     border-radius: 60px;
 }
-
-.btn {
+.btn{
     width: 100%;
     display: flex;
     justify-content: flex-end;
