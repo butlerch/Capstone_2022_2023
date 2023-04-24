@@ -76,7 +76,9 @@ def make_a_returnable_multiple(query_results, colnames):
     '''
     This function helps build a json object
     '''
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
+    
     cursor.execute("SELECT COUNT(*) FROM bottle_data;")
     num_bottles = int(cursor.fetchall()[0][0])
     returnable = []
@@ -185,6 +187,8 @@ def home():
 @app.route('/search',
            methods=['GET'])
 def search_wine_with_mutiple():
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     params_dict = {}
     params_list = []
     query_sql = "select * from bottle_data"
@@ -309,6 +313,8 @@ def return_bottle_data():
     url params: quantity
     values: "all", int
     '''
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     quantity = request.args.get('quantity')
     if not quantity:
         quantity = 'all'
@@ -334,7 +340,8 @@ def sort_by_winery_name():
     values: ["Alloro","Anne Amie","Archery Summit","Boedecker","Ken Writght
     Cellars","Minimus","Omero","Origin"]
     '''
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     winery_name = request.args.get('wineryName')
     if not winery_name:
         abort(404)
@@ -356,7 +363,8 @@ def sort_by_soil_type():
     url params: soils
     values:
     '''
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     soils = request.args.get('soils')
     if not soils:
         abort(404)
@@ -378,7 +386,8 @@ def sort_by_year():
     url params: year
     values:
     '''
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     year = request.args.get('year')
     if not year:
         abort(404)
@@ -409,7 +418,8 @@ def sort_by_varietal():
     Blanc","Semillon","Siegerrebe","Syrah","Tannat","Tempranillo","Touriga
     Nacional","Vermentino","Viognier","Zinfandel"]
     '''
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     varietals = request.args.get('varietals')
     if not varietals:
         abort(404)
@@ -432,7 +442,8 @@ def varietal_names_in_bottle_data():
     A specific route to pull varietal names
     '''
     returnable = []
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     cursor.execute("SELECT DISTINCT wine_name, varietals FROM bottle_data;")
     query_results = cursor.fetchall()
     for query_result in query_results:
@@ -454,6 +465,8 @@ def list_of_wineries():
     '''
     A specific route to only pull winery_names
     '''
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     cursor.execute("SELECT DISTINCT winery_name FROM bottle_data;")
     query_results = cursor.fetchall()
     if len(query_results) < 1:
@@ -467,7 +480,8 @@ def list_of_wine_names():
     '''
     A specific route to only pull wine_names
     '''
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     cursor.execute("SELECT bottle_id, year, winery_name, wine_name "
                    "FROM bottle_data ORDER BY bottle_id;")
     query_results = cursor.fetchall()
@@ -490,7 +504,8 @@ def varietal_names_list():
     '''
     This function returns all varietal names found in the varietal_data table
     '''
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     cursor.execute("SELECT varietal_name FROM varietal_data;")
     query_results = cursor.fetchall()
     if len(query_results) < 1:
@@ -508,6 +523,8 @@ def winery_info():
     values: ["Alloro","Anne Amie","Archery Summit","Boedecker","Ken Writght
     Cellars","Minimus","Omero","Origin"]
     '''
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     winery_name = request.args.get('wineryName')
     if not winery_name:
         abort(404)
@@ -533,7 +550,8 @@ def wineries():
     '''
     This function returns all winery names found in the winery_data table
     '''
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     cursor.execute("SELECT DISTINCT winery_name FROM winery_data;")
     query_results = cursor.fetchall()
     if len(query_results) < 1:
@@ -543,7 +561,7 @@ def wineries():
 
 ###############################################################################
 
-# 添加或取消喜欢的酒厂
+# add or cancel favorite wine saler
 @app.route("/addOrCancelFavWineries",methods=["POST"])
 def add_or_cancel_fav_wineries():
     body = request.json
@@ -552,7 +570,7 @@ def add_or_cancel_fav_wineries():
     cursor.execute("select * from favorite_winery where user_id ={} and fav_winery = {}".format(user_id,winery_id))
     res = cursor.fetchall()
     print(res)
-    # 删除该记录
+    # cancle 
     if len(res) != 0:
         cursor.execute("delete from favorite_winery where user_id = {} and fav_winery={}".format(user_id,winery_id))
         db.commit()
@@ -561,7 +579,7 @@ def add_or_cancel_fav_wineries():
             "msg":"action successfully"
         }
         return response
-    # 增加记录
+    # add
     else:
         cursor.execute("insert into favorite_winery (user_id,fav_winery) values ({},{})".format(user_id, winery_id))
         db.commit()
@@ -572,6 +590,8 @@ def add_or_cancel_fav_wineries():
         return response
 @app.route("/listFavWineries",methods=["GET"])
 def list_fav_wineries():
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     user_id = request.args.get("userId")
     cursor.execute("select * from favorite_winery where user_id = {}".format(user_id))
     res = cursor.fetchall()
@@ -584,6 +604,8 @@ def list_fav_wineries():
     return arr
 @app.route("/addOrCancelFavQualities",methods=["POST"])
 def add_or_cancel_fav_qualities():
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     body = request.json
     user_id = body["userId"]
     wine_id = body["wineId"]
@@ -608,6 +630,8 @@ def add_or_cancel_fav_qualities():
         return response
 @app.route("/listFavQualities",methods=["GET"])
 def list_fav_qualities():
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     user_id = request.args.get("userId")
     cursor.execute("select * from favorite_quality where user_id = {}".format(user_id))
     res = cursor.fetchall()
@@ -622,6 +646,8 @@ def list_fav_qualities():
 # alc, ph, soils, cases produced
 @app.route("/searchWineWithQuality")
 def searchWineWithQuality():
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     sql_str = "select * from bottle_data where "
     if len(request.args) == 0:
         return {"msg":"invalid params","code":444}
