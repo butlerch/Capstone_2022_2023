@@ -8,6 +8,7 @@ import { Alert, Button, Dialog, Snackbar, TextField } from "@mui/material";
 // Routing & Paths
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 
 // Style & Components
 import "./Winesheet.css";
@@ -32,8 +33,6 @@ import {
   parseOverview,
   parseTechnicalData,
 } from "../utils/parseData";
-import { string } from "prop-types";
-import { color } from "echarts";
 
 // Component Description: Displays a single winesheet.
 export default function Winesheet() {
@@ -76,10 +75,10 @@ export default function Winesheet() {
         data.push("winery_name" + values);
       }
     });
-    
+
     for (let key in res2) {
-      console.log('value',(res2[key]+'').trim());
-      let myvalue = (res2[key]+'').trim();
+      console.log("value", (res2[key] + "").trim());
+      let myvalue = (res2[key] + "").trim();
       if (data === null) {
         console.log("222");
         data = [key + myvalue];
@@ -91,7 +90,7 @@ export default function Winesheet() {
         data.push(key + myvalue);
       }
     }
-    console.log(data,res2);
+    console.log(data, res2);
     setFavoriteProperties(data);
   };
   const openMsg = (type, msg) => {
@@ -155,16 +154,10 @@ export default function Winesheet() {
           wineryId: id,
         });
         if (res.code === 200) {
-          openMsg(
-            "success",
-            "success" 
-          );
+          openMsg("success", "success");
           getFavorites();
         } else {
-          openMsg(
-            "error",
-           "error"
-          );
+          openMsg("error", "error");
         }
       } else {
         let data = favoriteProperties.find((item) => item === value.property);
@@ -176,16 +169,10 @@ export default function Winesheet() {
           qualityStr: value.key,
         });
         if (res.code === 200) {
-          openMsg(
-            "success",
-            "success"
-          );
+          openMsg("success", "success");
           getFavorites();
         } else {
-          openMsg(
-            "error",
-            "error"
-          );
+          openMsg("error", "error");
         }
       }
     }
@@ -307,7 +294,9 @@ export default function Winesheet() {
     localStorage.setItem("desc", JSON.stringify(data));
     navigate("/winesheetDetail/" + bottle_id);
   };
-
+  const openUrl = (url) => {
+    window.open(url);
+  };
   return (
     <div className="winesheetPageContainer">
       {/* start */}
@@ -338,14 +327,19 @@ export default function Winesheet() {
                 <div className="technicalDataHeader">
                   <span className="title">{overview.title}</span>
                   <div className="btn">
-                      <a
-                        href = {info.winery_url}
-                        class="primaryButton myprimaryButton" 
-                      >
-                        Visit winery
-                      </a>
+                    <div
+                      className="primaryButton myprimaryButton"
+                      onClick={() => openUrl(info.winery_url)}
+                    >
+                      Visit winery
                     </div>
-                  <span className="subtitle" style={{'font-family': "'Montserrat', sans-serif"}}>{info.description}</span>
+                  </div>
+                  <span
+                    className="subtitle"
+                    style={{ "font-family": "'Montserrat', sans-serif" }}
+                  >
+                    {info.description}
+                  </span>
                 </div>
 
                 {/* Technical Data Grid */}
@@ -446,13 +440,16 @@ export default function Winesheet() {
                     )}
 
                     {/* Winesheet Preview Image */}
-                    <a href={filePaths.file} download>
-                      <img
-                        src={filePaths.thumbnail}
-                        className="winesheetPageThumbnail"
-                        alt="Winesheet Download Button"
-                      />
-                    </a>
+
+                    <PhotoProvider maskOpacity={0.5}>
+                      <PhotoView src={filePaths.thumbnail}>
+                        <img
+                          src={filePaths.thumbnail}
+                          className="winesheetPageThumbnail"
+                          alt="Winesheet Download Button"
+                        />
+                      </PhotoView>
+                    </PhotoProvider>
                   </div>
                   {/* Navigation Arrows (Mobile) */}
                   <div className="mobile">

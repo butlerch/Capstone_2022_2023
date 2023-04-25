@@ -61,7 +61,7 @@ export default function Submit() {
                     }}>
                         <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset'}}>
                             {element.split('_').map(str => <span key={str}
-                                                                 style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
+                                style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
                         </span>
                         <input style={{maxWidth: 500}} className="technicalFormInput" value={technicalForm[element]}
                                onChange={e => {
@@ -71,7 +71,7 @@ export default function Submit() {
                                            [element]: e.target.value
                                        }
                                    })
-                               }} />
+                               }}/>
                     </div>)}
                     {/*<div className="technicalDataGridItem"*/}
                     {/*     style={{display: 'flex', flexDirection: 'row', justifyContent: "space-between", marginBottom: '1rem'}}>*/}

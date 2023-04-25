@@ -13,7 +13,7 @@ import loading from "../images/loading.svg";
 export default function Loading() {
     return <>
         <div className="loadingContainer">
-            <img src={loading} className="spinner" alt="Loading" />
+            <img src={loading} className="spinner" alt="Loading"/>
         </div>
     </>
 }

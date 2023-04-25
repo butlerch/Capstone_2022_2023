@@ -16,7 +16,7 @@ export default function About() {
 
     return <>
         <AccessoryPage title={title} subtitle={subtitle}>
-            <EditAbout />
+            <EditAbout/>
         </AccessoryPage>
     </>
 }
