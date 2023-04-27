@@ -165,7 +165,7 @@
 }
 
 .winesheetPageThumbnail {
-    max-width: 500px;
+    width: 500px;
     background: #FFFFFF;
     border: #C0C0C0 solid 2px;
     border-radius: 25px;
@@ -186,7 +186,6 @@
 .btn{
     width: 100%;
     display: flex;
-    justify-content: flex-end;
-    transform: translatex(80px);
+    transform: translatex(-63px);
 }
 

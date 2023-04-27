@@ -16,7 +16,7 @@ export default function Developer() {
 
     return <>
         <AccessoryPage title={title} subtitle={subtitle}>
-            <EditDeveloper />
+            <EditDeveloper/>
         </AccessoryPage>
     </>
 }

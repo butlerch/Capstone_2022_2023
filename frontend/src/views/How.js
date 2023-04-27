@@ -16,7 +16,7 @@ export default function Howtousethissite() {
 
     return <>
         <AccessoryPage title={title} subtitle={subtitle}>
-            <EditHow />
+            <EditHow/>
         </AccessoryPage>
     </>
-}
+}  

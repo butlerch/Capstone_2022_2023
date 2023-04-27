@@ -16,7 +16,7 @@ export default function Contact() {
 
     return <>
         <AccessoryPage title={title} subtitle={subtitle}>
-            <EditContact />
+            <EditContact/>
         </AccessoryPage>
     </>
 }

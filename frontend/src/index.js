@@ -4,7 +4,7 @@
 // React Setup
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-
+import 'react-photo-view/dist/react-photo-view.css';
 // Authentication
 import {Auth0Provider} from "@auth0/auth0-react";
 import {getConfig} from "./config/config";
@@ -60,21 +60,21 @@ root.render(<Auth0Provider {...providerConfig}>
         {/* Routing/Paths */}
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<App />}>
-                    <Route index element={<Landing />} />
-                    <Route path="results" element={<Results />} />
-                    <Route path="profile" element={<Profile />} />
-                    <Route path="about" element={<About />} />
-                    <Route path="contact" element={<Contact />} />
-                    <Route path="developer" element={<Developer />} />
-                    <Route path="dashboard" element={<Dashboard></Dashboard>} />
-                    <Route path="Howtousethissite" element={<How />} />
-                    <Route path="submit" element={<Submit />} />
-                    <Route path="admin" element={<Admin />} />
-                    <Route path="/admin/bottle" element={<Bottle />} />
-                    <Route path="/admin/winery" element={<Winery />} />
-                    <Route path="winesheets" element={<Winesheets />}>
-                        <Route path=":winesheetId" element={<Winesheet />} />
+                <Route path="/" element={<App/>}>
+                    <Route index element={<Landing/>}/>
+                    <Route path="results" element={<Results/>}/>
+                    <Route path="profile" element={<Profile/>}/>
+                    <Route path="about" element={<About/>}/>
+                    <Route path="contact" element={<Contact/>}/>
+                    <Route path="developer" element={<Developer/>}/>
+                     <Route path="dashboard" element={<Dashboard></Dashboard>} />
+                    <Route path="Howtousethissite" element={<How/>}/>
+                    <Route path="submit" element={<Submit/>}/>
+                    <Route path="admin" element={<Admin/>} />
+                    <Route path="/admin/bottle" element={<Bottle/>}  />
+                    <Route path="/admin/winery" element={<Winery/>} />
+                    <Route path="winesheets" element={<Winesheets/>}>
+                        <Route path=":winesheetId" element={<Winesheet/>}/>
                     </Route>
                     <Route path="winesheetDetail" element={<WinesheetDetail />}>
                         <Route path=":winesheetDetailId" element={<WinesheetDetail />} />
