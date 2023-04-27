@@ -5,13 +5,6 @@ runtime: python38
 # then it uses gunicorn on Port#8080 (required port) to run api.py
 entrypoint: gunicorn -b :8080 --chdir ./server api:app
 
-# export DB_HOST='34.82.130.245', 
-# export DB_HOST='/cloudsql/mineral-catwalk-368610:us-west1:southacyril/'
-# export DB_PORT=5432, 
-# export DB_USER='postgres',
-# export DB_PASSWORD='qwert1234',
-# export DATABASE_NAME='postgres'
-
 env_variables:
   PROJECT_ID: 'mineral-catwalk-368610'
   DB_INSTANCE: 'mineral-catwalk-368610:us-west1:southacyril'
