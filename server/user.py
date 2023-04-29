@@ -4,7 +4,9 @@ import json
 from flask import jsonify, make_response
 from flask import Blueprint, request
 import psycopg2
-from server.verify_jwt import verify_jwt, AuthError
+from pool import pg_pool
+# from server.verify_jwt import verify_jwt, AuthError
+from verify_jwt import verify_jwt, AuthError
 from dotenv import load_dotenv
 import os
 
@@ -13,18 +15,6 @@ load_dotenv()
 
 # Blueprint routing
 bp = Blueprint('user', __name__, url_prefix='/user')
-
-# == Database Instance  ==
-db = psycopg2.connect(
-    host=os.environ.get('DB_HOST'),
-    port=os.environ.get('DB_PORT'),
-    user=os.environ.get('DB_USER'),
-    password=os.environ.get('DB_PASSWORD'),
-    database=os.environ.get('DATABASE_NAME')
-)
-
-cursor = db.cursor()
-
 
 # Description: Error Handler for Auth0/JWT Errors
 @bp.errorhandler(AuthError)
@@ -37,6 +27,10 @@ def handle_auth_error(ex):
 # Description: Given a user_auth id, this function attempts to retrieve a user from the database;
 # if the user doesn't exist, they are created and stored in the database; user data is returned as JSON.
 def retrieve_user(user_auth):
+    # Open cursor for database access
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
+    
     # Confirm that the user exists in the database
     cursor.execute(cursor.mogrify("SELECT * FROM users WHERE user_auth = %s", (user_auth,)))
     query_results = cursor.fetchall()
@@ -47,12 +41,12 @@ def retrieve_user(user_auth):
         cursor.execute(cursor.mogrify(
             "INSERT INTO users(user_auth, location, fav_techsheets, fav_wineries) VALUES (%s, NULL, '[]', '[]')",
             (user_auth,)))
-        db.commit()
+        conn.commit()
 
         # Retrieve the newly-created user from the database.
         cursor.execute(cursor.mogrify("SELECT * FROM users WHERE user_auth = %s", (user_auth,)))
         query_results = cursor.fetchall()
-
+    pg_pool.putconn(conn)
     # Return the user object.
     return {"id": query_results[0][0], "user_auth": query_results[0][1],
             "fav_techsheets": query_results[0][2], "fav_wineries": query_results[0][3],
@@ -61,6 +55,10 @@ def retrieve_user(user_auth):
 
 # Description: Given a bottle id, this function retrieves a bottle from the database and returns a JSON object.
 def make_returnable_bottle(bottle_id):
+    # Open cursor for database access
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
+    
     cursor.execute("SELECT * FROM bottle_data WHERE bottle_id = '{}';".format(bottle_id))
 
     query_results = cursor.fetchall()
@@ -81,6 +79,7 @@ def make_returnable_bottle(bottle_id):
             if isinstance(query_results, str):
                 returnable[colname].strip()
         i += 1
+    pg_pool.putconn(conn)
     return returnable
 
 
@@ -104,6 +103,10 @@ def user():
 # All other methods invalid.
 @bp.route('/favorites/wines/<int:bottle_id>', methods=['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])
 def wines(bottle_id):
+    # Open cursor for database access
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
+    
     # Verifies the JWT, pulls the user_auth id from the token, and retrieves the user.
     payload = verify_jwt(request)
     user_auth = payload["sub"]
@@ -144,7 +147,7 @@ def wines(bottle_id):
         cursor.execute(cursor.mogrify("UPDATE users SET fav_techsheets = %s WHERE user_auth = %s",
                                       (updated_list, user_auth)))
 
-        db.commit()
+        conn.commit()
         res = make_response('Added Favorite', 201)
         res.headers['Content-Type'] = 'application/json'
         return res
@@ -164,10 +167,11 @@ def wines(bottle_id):
         cursor.execute(cursor.mogrify("UPDATE users SET fav_techsheets = %s WHERE user_auth = %s",
                                       (json.dumps(updated_list), user_auth)))
 
-        db.commit()
+        conn.commit()
         res = make_response('Removed Favorite', 201)
         res.headers['Content-Type'] = 'application/json'
         return res
+    pg_pool.putconn(conn)
 
     res = make_response('Invalid Method', 405)
     res.headers['Content-Type'] = 'application/json'
@@ -175,6 +179,10 @@ def wines(bottle_id):
 
 @bp.route('/favorites/wineries/<winery_name>', methods=['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])
 def winery(winery_name):
+    # Open cursor for database access
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
+    
     # Verifies the JWT, pulls the user_auth id from the token, and retrieves the user.
     payload = verify_jwt(request)
     user_auth = payload["sub"]
@@ -215,7 +223,7 @@ def winery(winery_name):
         cursor.execute(cursor.mogrify("UPDATE users SET fav_wineries = %s WHERE user_auth = %s",
                                       (updated_list, user_auth)))
 
-        db.commit()
+        conn.commit()
         res = make_response('Added Favorite', 201)
         res.headers['Content-Type'] = 'application/json'
         return res
@@ -233,11 +241,11 @@ def winery(winery_name):
         cursor.execute(cursor.mogrify("UPDATE users SET fav_wineries = %s WHERE user_auth = %s",
                                       (json.dumps(updated_list), user_auth)))
 
-        db.commit()
+        conn.commit()
         res = make_response('Removed Favorite', 201)
         res.headers['Content-Type'] = 'application/json'
         return res
-
+    pg_pool.putconn(conn)
     res = make_response('Invalid Method', 405)
     res.headers['Content-Type'] = 'application/json'
     return res
