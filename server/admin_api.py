@@ -4,11 +4,14 @@ import json
 from flask import jsonify, make_response
 from flask import Blueprint, request
 import psycopg2
-from pool import pg_pool
-from verify_jwt import verify_jwt, AuthError
+from server.verify_jwt import verify_jwt, AuthError
+from dotenv import load_dotenv
 import os
 import sys
 from werkzeug.utils import secure_filename
+
+# Load credentials from environmental variables
+load_dotenv()
 
 # Blueprint routing
 bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -16,8 +19,15 @@ pdf_pathway = '../frontend/public/pdfs'
 pic_pathway = '../frontend/public/pictures'
 
 # == Database Instance  ==
+connection = psycopg2.connect(
+    host=os.environ.get('DB_HOST'),
+    port=os.environ.get('DB_PORT'),
+    user=os.environ.get('DB_USER'),
+    password=os.environ.get('DB_PASSWORD'),
+    database=os.environ.get('DATABASE_NAME')
+)
 
-# cursor = connection.cursor()
+cursor = connection.cursor()
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -93,10 +103,6 @@ def add_wine():
     '''
     Fucntion to setup and run an INSERT query for a new wine to be added
     '''
-    # Open cursor
-    conn = pg_pool.getconn()
-    cursor = conn.cursor()
-    
     # Pull the information to add
     pdf = request.files['file']
     filename = secure_filename(pdf.filename)
@@ -131,12 +137,12 @@ def add_wine():
         print_psycopg2_exception(err)
 
         # rollback the previous transaction before starting another
-        conn.rollback()
+        connection.rollback()
         res = make_response('Query Failed', 422)
         res.headers['Content-Type'] = 'application/json'
         return res
-    conn.commit()
-    pg_pool.putconn(conn)
+
+    connection.commit()
     res = make_response('Added New Wine Bottle', 201)
     res.headers['Content-Type'] = 'application/json'
     return res
@@ -150,10 +156,6 @@ def edit_wine():
     Checks the differences and unions them to send the updated information
     to the database
     '''
-    # Open cursor
-    conn = pg_pool.getconn()
-    cursor = conn.cursor()
-    
     # Pull the information to add from the request object
     try:
         pdf = request.files['file']
@@ -174,7 +176,7 @@ def edit_wine():
         print_psycopg2_exception(err)
 
         # rollback the previous transaction before starting another
-        conn.rollback()
+        connection.rollback()
         res = make_response('Query Failed', 422)
         res.headers['Content-Type'] = 'application/json'
         return res
@@ -231,13 +233,12 @@ def edit_wine():
         print_psycopg2_exception(err)
 
         # rollback the previous transaction before starting another
-        conn.rollback()
+        connection.rollback()
         res = make_response('Query Failed', 422)
         res.headers['Content-Type'] = 'application/json'
         return res
 
-    conn.commit()
-    pg_pool.putconn(conn)
+    connection.commit()
     res = make_response('Added New Wine Bottle', 201)
     res.headers['Content-Type'] = 'application/json'
     return res
@@ -248,10 +249,6 @@ def add_winery():
     '''
     Function/API call to add a new winery
     '''
-    # Open cursor
-    conn = pg_pool.getconn()
-    cursor = conn.cursor()
-    
     # Pull the information to add
     pdf = request.files['file']
     filename = secure_filename(pdf.filename)
@@ -284,13 +281,12 @@ def add_winery():
         print_psycopg2_exception(err)
 
         # rollback the previous transaction before starting another
-        conn.rollback()
+        connection.rollback()
         res = make_response('Query Failed', 422)
         res.headers['Content-Type'] = 'application/json'
         return res
 
-    conn.commit()
-    pg_pool.putconn(conn)
+    connection.commit()
     res = make_response('Added New Winery', 201)
     res.headers['Content-Type'] = 'application/json'
     return res
@@ -303,10 +299,6 @@ def edit_winery():
     Checks the differences and unions them to send the updated information
     to the database
     '''
-    # Open cursor
-    conn = pg_pool.getconn()
-    cursor = conn.cursor()
-    
     # Pull the information to add
     try:
         png = request.files['file']
@@ -326,7 +318,7 @@ def edit_winery():
         print_psycopg2_exception(err)
 
         # rollback the previous transaction before starting another
-        conn.rollback()
+        connection.rollback()
         res = make_response('Query Failed', 422)
         res.headers['Content-Type'] = 'application/json'
         return res
@@ -373,13 +365,12 @@ def edit_winery():
         print_psycopg2_exception(err)
 
         # rollback the previous transaction before starting another
-        conn.rollback()
+        connection.rollback()
         res = make_response('Query Failed', 422)
         res.headers['Content-Type'] = 'application/json'
         return res
 
-    conn.commit()
-    pg_pool.putconn(conn)
+    connection.commit()
     res = make_response('Added New Winery', 201)
     res.headers['Content-Type'] = 'application/json'
     return res
