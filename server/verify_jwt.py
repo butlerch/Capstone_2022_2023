@@ -17,9 +17,6 @@ DOMAIN = os.environ.get('AUTH_DOMAIN')
 AUDIENCE = os.environ.get('API_AUDIENCE')
 ALGORITHMS = os.environ.get('AUTH_ALGORITHM')
 
-# DOMAIN = 'winedatalake.us.auth0.com'
-# AUDIENCE = 'aF3LnZv!&W@CB*@JZhTR8k7ZPT3gBGqvNdGmyJLspA#9T6hLJx59&pvAZ6'
-# ALGORITHMS = '[ "RS256" ]'
 
 class AuthError(Exception):
     def __init__(self, error, status_code):
