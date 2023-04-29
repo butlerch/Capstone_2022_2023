@@ -16,14 +16,6 @@ load_dotenv()
 # Blueprint routing
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-# == Database Instance  ==
-# db = psycopg2.connect(
-#     host=os.environ.get('DB_HOST'),
-#     port=os.environ.get('DB_PORT'),
-#     user=os.environ.get('DB_USER'),
-#     password=os.environ.get('DB_PASSWORD'),
-#     database=os.environ.get('DATABASE_NAME')
-# )
 # Description: Error Handler for Auth0/JWT Errors
 @bp.errorhandler(AuthError)
 def handle_auth_error(ex):
@@ -35,8 +27,10 @@ def handle_auth_error(ex):
 # Description: Given a user_auth id, this function attempts to retrieve a user from the database;
 # if the user doesn't exist, they are created and stored in the database; user data is returned as JSON.
 def retrieve_user(user_auth):
+    # Open cursor for database access
     conn = pg_pool.getconn()
     cursor = conn.cursor()
+    
     # Confirm that the user exists in the database
     cursor.execute(cursor.mogrify("SELECT * FROM users WHERE user_auth = %s", (user_auth,)))
     query_results = cursor.fetchall()
@@ -61,8 +55,10 @@ def retrieve_user(user_auth):
 
 # Description: Given a bottle id, this function retrieves a bottle from the database and returns a JSON object.
 def make_returnable_bottle(bottle_id):
+    # Open cursor for database access
     conn = pg_pool.getconn()
     cursor = conn.cursor()
+    
     cursor.execute("SELECT * FROM bottle_data WHERE bottle_id = '{}';".format(bottle_id))
 
     query_results = cursor.fetchall()
@@ -107,8 +103,10 @@ def user():
 # All other methods invalid.
 @bp.route('/favorites/wines/<int:bottle_id>', methods=['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])
 def wines(bottle_id):
+    # Open cursor for database access
     conn = pg_pool.getconn()
     cursor = conn.cursor()
+    
     # Verifies the JWT, pulls the user_auth id from the token, and retrieves the user.
     payload = verify_jwt(request)
     user_auth = payload["sub"]
@@ -181,8 +179,10 @@ def wines(bottle_id):
 
 @bp.route('/favorites/wineries/<winery_name>', methods=['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])
 def winery(winery_name):
+    # Open cursor for database access
     conn = pg_pool.getconn()
     cursor = conn.cursor()
+    
     # Verifies the JWT, pulls the user_auth id from the token, and retrieves the user.
     payload = verify_jwt(request)
     user_auth = payload["sub"]
