@@ -1,16 +1,18 @@
 # Description: API entrypoint; contains all the functionality for accessing the database.
 import json
-import string
-import psycopg2
-from flask import Flask, jsonify, request, abort, Response, make_response
-from verify_jwt import verify_jwt, AuthError
-import re
-import user
-import admin_api
-from authlib.integrations.flask_client import OAuth
 import os
+import re
+import string
+import datetime
+from pool import pg_pool
+import user
+# import admin_api
+from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
+from flask import Flask, Response, abort, jsonify, make_response, request
 from flask_cors import CORS
+from verify_jwt import AuthError, verify_jwt
+
 # import secrets
 
 # Load credentials from environmental variables
@@ -27,7 +29,7 @@ oauth = OAuth(app)
 auth0 = oauth.register(
     'auth0',
     client_id=os.environ.get('AUTH_CLIENT_ID'),
-    # client_secret=secrets.access_secret_version('AUTH_CLIENT_SECRET', 1),
+# client_secret=secrets.access_secret_version('AUTH_CLIENT_SECRET', 1),
     api_base_url="https://" + os.environ.get('AUTH_DOMAIN'),
     access_token_url="https://" + os.environ.get('AUTH_DOMAIN') + "/oauth/token",
     authorize_url="https://" + os.environ.get('AUTH_DOMAIN') + "/authorize",
@@ -36,20 +38,55 @@ auth0 = oauth.register(
     },
 )
 
-#== Database Instance  ==
-db = psycopg2.connect(
-    host=os.environ.get('DB_HOST'),
-    port=os.environ.get('DB_PORT'),
-    user=os.environ.get('DB_USER'),
-    password=os.environ.get('DB_PASSWORD'),
-    database=os.environ.get('DATABASE_NAME')
-)
+# == Database Instance  ==
+# db = psycopg2.connect(
+#     host=os.environ.get('DB_HOST'),
+#     port=os.environ.get('DB_PORT'),
+#     user=os.environ.get('DB_USER'),
+#     password=os.environ.get('DB_PASSWORD'),
+#     database=os.environ.get('DATABASE_NAME')
+# )
 
-cursor = db.cursor()
+# oauth = OAuth(app)
+# auth0 = oauth.register(
+#     'auth0',
+#     client_id="Nncz6b9skBCCAkyR4AFUyEdct3URx5Kd",
+#     client_secret="7TuyECcDnsACqDk8E98AVF4PD4Pf9QJ4Bm6q5asgYKOd0FqR1C3t4xoSrwskc9ko",
+#     api_base_url="https://" + "Nncz6b9skBCCAkyR4AFUyEdct3URx5Kd",
+#     access_token_url="https://" + "Nncz6b9skBCCAkyR4AFUyEdct3URx5Kd" + "/oauth/token",
+#     authorize_url="https://" + "Nncz6b9skBCCAkyR4AFUyEdct3URx5Kd" + "/authorize",
+#     client_kwargs={
+#         'scope': "openid profile email",
+#     },
+# )
+
+# DB_HOST = "127.0.0.1"
+# DB_PORT = "5432"
+# DB_USER = "postgres"
+# DB_PASSWORD = "qwert1234"
+# DATABASE_NAME = "postgres"
+
+# db = psycopg2.connect(
+#     # host=DB_HOST,
+#     # port=DB_PORT,
+#     # user=DB_USER,
+#     # password=DB_PASSWORD,
+#     # database=DATABASE_NAME
+#     host='124.70.19.165',
+#     port=11074,
+#     user='postgres',
+#     password='postgres',
+#     database='postgres'
+# )
+#
+# cursor = db.cursor()
 
 # Registers the route for the User Entity (located in user.py)
 app.register_blueprint(user.bp)
-app.register_blueprint(admin_api.bp)
+
+
+# app.register_blueprint(admin_api.bp)
+
 
 def make_a_returnable_single(query_results, colnames, num_bottles):
     '''
@@ -78,7 +115,6 @@ def make_a_returnable_multiple(query_results, colnames):
     '''
     conn = pg_pool.getconn()
     cursor = conn.cursor()
-    
     cursor.execute("SELECT COUNT(*) FROM bottle_data;")
     num_bottles = int(cursor.fetchall()[0][0])
     returnable = []
@@ -86,6 +122,7 @@ def make_a_returnable_multiple(query_results, colnames):
         nth_returnable = make_a_returnable_single(
             query_result, colnames, num_bottles)
         returnable.append(nth_returnable)
+    pg_pool.putconn(conn)
     return jsonify(returnable)
 
 
@@ -114,10 +151,9 @@ def home():
             hello, world
             '''
 
-
-# @app.route('/search',
-#            methods=['GET'])  # TODO: will need another set of eyes to help me figure out how to make this one faster
-# def search():
+    # @app.route('/search',
+    #            methods=['GET'])  # TODO: will need another set of eyes to help me figure out how to make this one faster
+    # def search():
     '''
     This function returns a bottle data based on search parameters. If none are
     specified, it returns everything in the table
@@ -176,14 +212,17 @@ def home():
     query_string += substring
 
     query_string += ";"
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     cursor.execute(query_string)
-
     query_results = cursor.fetchall()
+    pg_pool.putconn(conn)
     if len(query_results) < 1:
         abort(404)
     colnames = [desc[0] for desc in cursor.description]
     return make_a_returnable_multiple(query_results, colnames)
+
+
 @app.route('/search',
            methods=['GET'])
 def search_wine_with_mutiple():
@@ -252,7 +291,6 @@ def search_wine_with_mutiple():
                         end = cases_produced.split("-")[1]
                         sql_str += key + ">= {}".format(start) + " and " + key + "<= {}".format(end)
         query_sql += sql_str
-    print(query_sql)
     cursor.execute(query_sql)
     res = cursor.fetchall()
     res_list = []
@@ -261,8 +299,10 @@ def search_wine_with_mutiple():
                     "pct_alcohol": i[5], "ta": i[6], "ph": i[7], "soils": i[8], "varietals": i[9], "clones": i[10],
                     "clusters": i[11], "aging_process": i[12], "cases_produced": i[13], "source_file": i[14],
                     "run_date": i[15], "description": i[16]}
-        res_list.append(res_dict)    
+        res_list.append(res_dict)
+    pg_pool.putconn(conn)
     return res_list
+
 
 @app.route('/random', methods=['GET'])
 def random_bottle_data():
@@ -271,7 +311,8 @@ def random_bottle_data():
     url params: quantity
     variables: <none>, int
     '''
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     quantity = request.args.get('quantity')
     if not quantity:
         quantity = 1
@@ -280,6 +321,7 @@ def random_bottle_data():
         "SELECT * FROM bottle_data TABLESAMPLE BERNOULLI (100) ORDER BY random() LIMIT {};"
         .format(quantity))
     query_results = cursor.fetchall()
+    pg_pool.putconn(conn)
     if len(query_results) < 0:
         abort(404)
     colnames = [desc[0] for desc in cursor.description]
@@ -291,9 +333,10 @@ def techsheets_by_id(bottle_id):
     '''
     This function returns a row of bottle data by bottle_id
     '''
-
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     cursor.execute(
-        "SELECT a.*,b.winery_url FROM bottle_data AS a RIGHT JOIN winery_data AS b ON a.winery_name = b.winery_name WHERE a.bottle_id = {};".format(bottle_id))
+        "SELECT a.*,b.winery_url FROM bottle_data AS a RIGHT JOIN winery_data  as b ON a.winery_name = b.winery_name WHERE a.bottle_id = {};".format(bottle_id))
     query_results = cursor.fetchall()
 
     if len(query_results) != 1:
@@ -302,6 +345,7 @@ def techsheets_by_id(bottle_id):
     colnames = [desc[0] for desc in cursor.description]
     cursor.execute("SELECT COUNT(*) FROM bottle_data;")
     num_bottles = int(cursor.fetchall()[0][0])
+    pg_pool.putconn(conn)
     return make_a_returnable_single(query_results, colnames, num_bottles)
 
 
@@ -328,6 +372,7 @@ def return_bottle_data():
     if len(query_results) < 1:
         abort(404)
     colnames = [desc[0] for desc in cursor.description]
+    pg_pool.putconn(conn)
     return make_a_returnable_multiple(query_results, colnames)
 
 
@@ -352,6 +397,7 @@ def sort_by_winery_name():
     if len(query_results) < 1:
         abort(404)
     colnames = [desc[0] for desc in cursor.description]
+    pg_pool.putconn(conn)
     return make_a_returnable_multiple(query_results, colnames)
 
 
@@ -375,6 +421,7 @@ def sort_by_soil_type():
     if len(query_results) < 1:
         abort(404)
     colnames = [desc[0] for desc in cursor.description]
+    pg_pool.putconn(conn)
     return make_a_returnable_multiple(query_results, colnames)
 
 
@@ -396,6 +443,7 @@ def sort_by_year():
     if len(query_results) < 1:
         abort(404)
     colnames = [desc[0] for desc in cursor.description]
+    pg_pool.putconn(conn)
     return make_a_returnable_multiple(query_results, colnames)
 
 
@@ -433,6 +481,7 @@ def sort_by_varietal():
     if len(query_results) < 1:
         abort(404)
     colnames = [desc[0] for desc in cursor.description]
+    pg_pool.putconn(conn)
     return make_a_returnable_multiple(query_results, colnames)
 
 
@@ -457,22 +506,26 @@ def varietal_names_in_bottle_data():
             varietal = varietal.strip();
             if varietal not in returnable and varietal != "NULL" and varietal != "Null" and len(varietal) > 0:
                 returnable.append(varietal.strip())
+    pg_pool.putconn(conn)
     return jsonify({"varietals": returnable})
 
-# 
+
+#
 @app.route('/listOfWineries', methods=['GET'])
 def list_of_wineries():
-    '''
-    A specific route to only pull winery_names
-    '''
     conn = pg_pool.getconn()
     cursor = conn.cursor()
-    cursor.execute("SELECT DISTINCT winery_name FROM bottle_data;")
+    cursor.execute("SELECT DISTINCT winery_name FROM bottle_data")
     query_results = cursor.fetchall()
+    print(query_results)
     if len(query_results) < 1:
         abort(404)
-    returnable = [''.join(query_result) for query_result in query_results]
-    return jsonify({"wineries": returnable}) 
+    returnable = []
+    for res in query_results:
+        returnable.append(res[0])
+    resp = {"wineries":returnable}
+    pg_pool.putconn(conn)
+    return resp
 
 
 @app.route('/bottleNames', methods=['GET'])
@@ -489,6 +542,7 @@ def list_of_wine_names():
         abort(404)
 
     colnames = [desc[0] for desc in cursor.description]
+    pg_pool.putconn(conn)
     return make_a_returnable_multiple(query_results, colnames)
 
 
@@ -511,6 +565,7 @@ def varietal_names_list():
     if len(query_results) < 1:
         abort(404)
     returnable = [query_result[0] for query_result in query_results]
+    pg_pool.putconn(conn)
     return jsonify({"varietals": returnable})
 
 
@@ -542,6 +597,7 @@ def winery_info():
     for colname in colnames:
         returnable[colname] = query_results[i]
         i += 1
+    pg_pool.putconn(conn)
     return jsonify(returnable)
 
 
@@ -557,38 +613,43 @@ def wineries():
     if len(query_results) < 1:
         abort(404)
     returnable = [''.join(query_result) for query_result in query_results]
+    pg_pool.putconn(conn)
     return jsonify({"wineries": returnable})
+
 
 ###############################################################################
 
-# add or cancel favorite wine saler
-@app.route("/addOrCancelFavWineries",methods=["POST"])
+@app.route("/addOrCancelFavWineries", methods=["POST"])
 def add_or_cancel_fav_wineries():
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
     body = request.json
     user_id = body["userId"]
     winery_id = body["wineryId"]
-    cursor.execute("select * from favorite_winery where user_id ={} and fav_winery = {}".format(user_id,winery_id))
+    cursor.execute("select * from favorite_winery where user_id ={} and fav_winery = {}".format(user_id, winery_id))
     res = cursor.fetchall()
     print(res)
-    # cancle 
+
     if len(res) != 0:
-        cursor.execute("delete from favorite_winery where user_id = {} and fav_winery={}".format(user_id,winery_id))
-        db.commit()
-        response = {
-            "code":200,
-            "msg":"action successfully"
-        }
-        return response
-    # add
-    else:
-        cursor.execute("insert into favorite_winery (user_id,fav_winery) values ({},{})".format(user_id, winery_id))
-        db.commit()
+        cursor.execute("delete from favorite_winery where user_id = {} and fav_winery={}".format(user_id, winery_id))
+        conn.commit()
         response = {
             "code": 200,
             "msg": "action successfully"
         }
         return response
-@app.route("/listFavWineries",methods=["GET"])
+
+    else:
+        cursor.execute("insert into favorite_winery (user_id,fav_winery) values ({},{})".format(user_id, winery_id))
+        conn.commit()
+        response = {
+            "code": 200,
+            "msg": "action successfully"
+        }
+        return response
+
+
+@app.route("/listFavWineries", methods=["GET"])
 def list_fav_wineries():
     conn = pg_pool.getconn()
     cursor = conn.cursor()
@@ -601,8 +662,11 @@ def list_fav_wineries():
         cursor.execute("select winery_name from winery_data where winery_id = {}".format(winery_id))
         winery_names = cursor.fetchall()
         arr.append(winery_names[0][0])
+    pg_pool.putconn(conn)
     return arr
-@app.route("/addOrCancelFavQualities",methods=["POST"])
+
+
+@app.route("/addOrCancelFavQualities", methods=["POST"])
 def add_or_cancel_fav_qualities():
     conn = pg_pool.getconn()
     cursor = conn.cursor()
@@ -610,25 +674,37 @@ def add_or_cancel_fav_qualities():
     user_id = body["userId"]
     wine_id = body["wineId"]
     qualitStr = body["qualityStr"]
-    cursor.execute("select * from favorite_quality where user_id = {} and fav_wine = {} and fav_quality_str = '{}'".format(user_id,wine_id,qualitStr))
+    cursor.execute(
+        "select * from favorite_quality where user_id = {} and fav_wine = {} and fav_quality_str = '{}'".format(user_id,
+                                                                                                                wine_id,
+                                                                                                                qualitStr))
     res = cursor.fetchall()
     if len(res) != 0:
-        cursor.execute("delete from favorite_quality  where user_id ={} and fav_wine ={} and fav_quality_str = '{}'".format(user_id,wine_id,qualitStr))
-        db.commit()
+        cursor.execute(
+            "delete from favorite_quality  where user_id ={} and fav_wine ={} and fav_quality_str = '{}'".format(
+                user_id, wine_id, qualitStr))
+        conn.commit()
         response = {
             "code": 200,
             "msg": "action successfully"
         }
+        pg_pool.putconn(conn)
         return response
     else:
-        cursor.execute("insert into favorite_quality (user_id,fav_wine,fav_quality_str) values({},{},'{}')".format(user_id,wine_id,qualitStr))
-        db.commit()
+        cursor.execute(
+            "insert into favorite_quality (user_id,fav_wine,fav_quality_str) values({},{},'{}')".format(user_id,
+                                                                                                        wine_id,
+                                                                                                        qualitStr))
+        conn.commit()
         response = {
             "code": 200,
             "msg": "action successfully"
         }
+        pg_pool.putconn(conn)
         return response
-@app.route("/listFavQualities",methods=["GET"])
+
+
+@app.route("/listFavQualities", methods=["GET"])
 def list_fav_qualities():
     conn = pg_pool.getconn()
     cursor = conn.cursor()
@@ -639,10 +715,13 @@ def list_fav_qualities():
     for i in res:
         wine_id = i[1]
         quality_str = i[2]
-        cursor.execute("select {} from bottle_data where bottle_id ={}".format(quality_str,wine_id))
+        cursor.execute("select {} from bottle_data where bottle_id ={}".format(quality_str, wine_id))
         qualities_res = cursor.fetchall()
-        response[quality_str] =qualities_res[0][0]
+        response[quality_str] = qualities_res[0][0]
+    pg_pool.putconn(conn)
     return response
+
+
 # alc, ph, soils, cases produced
 @app.route("/searchWineWithQuality")
 def searchWineWithQuality():
@@ -650,7 +729,7 @@ def searchWineWithQuality():
     cursor = conn.cursor()
     sql_str = "select * from bottle_data where "
     if len(request.args) == 0:
-        return {"msg":"invalid params","code":444}
+        return {"msg": "invalid params", "code": 444}
     if request.args.get("alc") != None:
         sql_str += "pct_alcohol='{}' ".format(request.args.get("alc"))
     if request.args.get("ph") != None:
@@ -658,19 +737,70 @@ def searchWineWithQuality():
     if request.args.get("soils") != None:
         sql_str += "and soils='{}'".format(request.args.get("soils"))
     if request.args.get("produced") != None:
-        produced_va = request.args.get("produced")     
+        produced_va = request.args.get("produced")
         start_va = produced_va.split("-")[0]
         end_va = produced_va.split("-")[1]
-        sql_str += "and cases_produced >= {} and cases_produced <={}".format(start_va,end_va)        
+        sql_str += "and cases_produced >= {} and cases_produced <={}".format(start_va, end_va)
     cursor.execute(sql_str)
     query_res = cursor.fetchall()
-    return  query_res
+    pg_pool.putconn(conn)
+    return query_res
+
+def get_now_week():
+    t_day = datetime.datetime.today()
+    week_day = t_day.isoweekday()
+    now_time = datetime.datetime.now()
+    arr = []
+    for x in range(0, week_day):
+        day_str = (now_time + datetime.timedelta(days=-x)).strftime("%Y-%m-%d")
+        week_count = week_day - x
+        arr.append({day_str: week_count})
+    return arr
 
 
+@app.route("/addReqCount", methods=["GET"])
+def add_request_count():
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
+    req_ip = request.args.get("ip")
+    cursor.execute("insert into record_data (req_record_ip) values('{}')".format(req_ip))
+    conn.commit()
+    pg_pool.putconn(conn)
+    return make_response(jsonify({
+        "msg": "commit successfully",
+        "code": 200
+    }))
 
 
+@app.route("/getWeekReqSumary", methods=["GET"])
+def get_week_req_sumary():
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
 
- 
+    arr = get_now_week()
+    json = {}
+    ip_count = 0
+    for item in arr:
+        for key, value in item.items():
+            cursor.execute(
+                "select count(*) from record_data where to_char(req_record_time, 'YYYY-MM-DD') like '{}'".format(key))
+            res = cursor.fetchone()
+            json[str(value)] = res[0]
+            cursor.execute(
+                "select distinct req_record_ip from record_data where to_char(req_record_time, 'YYYY-MM-DD') like '{}'".format(
+                    key))
+            count_res = cursor.fetchall()
+            ip_count += len(count_res)
+    week_day_count = len(json)
+    week_day_sumary = 0
+    for key, value in json.items():
+        week_day_sumary += value
+    json["week_average"] = round(week_day_sumary / week_day_count)
+    json["ip_count"] = ip_count
+    pg_pool.putconn(conn)
+    return json
+
+
 ###############################################################################
 
 @app.errorhandler(404)
