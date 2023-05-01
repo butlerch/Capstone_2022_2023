@@ -25,7 +25,7 @@ export default function Landing() {
 
     /* State for the background grid on the landing page & the search box. */
     const [grid, setGrid] = useState([])
-    const totalGridItems = 16;
+    const totalGridItems = 25;
     const techsheetThumbnailSize = "200px";
 
     /* Select Menu Dropdown Items */
