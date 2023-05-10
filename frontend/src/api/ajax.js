@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import { getConfig } from "../config/config";
 const { apiOrigin, audience, scope } = getConfig();
@@ -12,7 +11,6 @@ const request = axios.create({
 
 request.interceptors.request.use((config) => {
 
- 
   let token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
