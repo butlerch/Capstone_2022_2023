@@ -6,13 +6,9 @@ from flask import Blueprint, request
 import psycopg2
 from pool import pg_pool
 from verify_jwt import verify_jwt, AuthError
-# from dotenv import load_dotenv
 import os
 import sys
 from werkzeug.utils import secure_filename
-
-# Load credentials from environmental variables
-# load_dotenv()
 
 # Blueprint routing
 bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -20,7 +16,6 @@ pdf_pathway = '../frontend/public/pdfs'
 pic_pathway = '../frontend/public/pictures'
 
 # == Database Instance  ==
-
 
 # cursor = connection.cursor()
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -95,11 +90,13 @@ def prep_input(query_results, colnames):
 
 @bp.route('/add_wine', methods=['POST'])
 def add_wine():
-    conn = pg_pool.getconn()
-    cursor = conn.cursor()
     '''
     Fucntion to setup and run an INSERT query for a new wine to be added
     '''
+    # Open cursor
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
+    
     # Pull the information to add
     pdf = request.files['file']
     filename = secure_filename(pdf.filename)
@@ -118,17 +115,17 @@ def add_wine():
     cleaned = make_a_returnable_single_response(data, colnames)
 
     winery_name, winery_id, year, wine_name, pct_alc, ta, ph, soils,\
-        varietals, clones, clusters, aging_process, cases_prod = cleaned.values()
+        varietals, clones, clusters, aging_process, cases_prod, description = cleaned.values()
 
     cases_prod = int(cases_prod)
 
     try:
         cursor.execute(cursor.mogrify("INSERT INTO bottle_data (winery_name,"
         " winery_id, year, wine_name, pct_alcohol, ta, ph, soils, varietals,"
-        " clones, clusters, aging_process, cases_produced, source_file) "
-        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
+        " clones, clusters, aging_process, cases_produced, source_file, description) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
         (winery_name, winery_id, year, wine_name, pct_alc, ta, ph, soils,\
-        varietals, clones, clusters, aging_process, cases_prod, filename)))
+        varietals, clones, clusters, aging_process, cases_prod, filename, description)))
     except psycopg2.Error as err:
         # pass exception to function
         print_psycopg2_exception(err)
@@ -147,14 +144,16 @@ def add_wine():
 
 @bp.route('/edit_wine', methods=['POST'])
 def edit_wine():
-    conn = pg_pool.getconn()
-    cursor = conn.cursor()
     '''
     Function/APi to edit a wine bottle
     Takes in the response data, queries the correct information
     Checks the differences and unions them to send the updated information
     to the database
     '''
+    # Open cursor
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
+    
     # Pull the information to add from the request object
     try:
         pdf = request.files['file']
@@ -203,7 +202,7 @@ def edit_wine():
 
     # Set variables for SQL query
     winery_name, winery_id, year, wine_name, pct_alc, ta, ph, soils,\
-        varietals, clones, clusters, aging_process, cases_prod = cleaned.values()
+        varietals, clones, clusters, aging_process, cases_prod, description = cleaned.values()
 
     cases_prod = int(cases_prod)
 
@@ -222,11 +221,12 @@ def edit_wine():
         "clusters = %s," 
         "aging_process = %s," 
         "cases_produced = %s," 
-        "source_file = %s"
+        "source_file = %s,"
+        "description = %s"
         "WHERE bottle_id = %s;",
         (winery_name, winery_id, year, wine_name, pct_alc, ta, ph, soils,
             varietals, clones, clusters, aging_process, cases_prod, filename,
-            bottle_id)))
+            description, bottle_id)))
     except psycopg2.Error as err:
         # pass exception to function
         print_psycopg2_exception(err)
@@ -246,17 +246,21 @@ def edit_wine():
 
 @bp.route('/add_winery', methods=['POST'])
 def add_winery():
-    conn = pg_pool.getconn()
-    cursor = conn.cursor()
     '''
     Function/API call to add a new winery
     '''
+    # Open cursor
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
+    
     # Pull the information to add
-    pdf = request.files['file']
-    filename = secure_filename(pdf.filename)
+    pic = request.files['file']
+    filename = secure_filename(pic.filename)
     data = json.loads(request.form['technicalForm'])
-    if allowed_file(pdf.filename) and os.path.exists(filename) is False:
-        pdf.save(os.path.join(pic_pathway, filename))
+    if allowed_file(pic.filename) and os.path.exists(filename) is False:
+        pic.save(os.path.join(pic_pathway, filename))
+
+    print(data)
 
     # Check for empty strings
     for keys in data:
@@ -268,16 +272,14 @@ def add_winery():
         colnames.append(keys)
     cleaned = make_a_returnable_single_response(data, colnames)
 
-    winery_name, winemaker, address, city, state, zipcode, phone_number,\
-        website, bio = cleaned.values()
+    winery_name, winemaker, address, phone_number,\
+        website = cleaned.values()
 
     try:
         cursor.execute(cursor.mogrify("INSERT INTO winery_data (winery_name,"
-        " winemaker, address, city, state, zipcode, phone_number, winery_bio, winery_url,"
-        " winery_picture) "
-        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
-        (winery_name, winemaker, address, city, state, zipcode, phone_number,\
-        bio, website, filename)))
+        " winemaker, address, phone_number, winery_url) "
+        "VALUES (%s, %s, %s, %s, %s);",
+        (winery_name, winemaker, address, phone_number, website)))
     except psycopg2.Error as err:
         # pass exception to function
         print_psycopg2_exception(err)
@@ -294,25 +296,20 @@ def add_winery():
     res.headers['Content-Type'] = 'application/json'
     return res
 
+
 @bp.route('/edit_winery', methods=['POST'])
 def edit_winery():
-    conn = pg_pool.getconn()
-    cursor = conn.cursor()
     '''
     Function/APi to edit a wine bottle
     Takes in the response data, queries the correct information
     Checks the differences and unions them to send the updated information
     to the database
     '''
+    # Open cursor
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
+    
     # Pull the information to add
-    try:
-        png = request.files['file']
-        filename = secure_filename(png.filename)
-        if allowed_file(png.filename) and os.path.exists(filename) is False:
-            png.save(os.path.join(pic_pathway, filename))
-    except:
-        filename = ''
-
     data = json.loads(request.form['technicalForm'])
 
     # Query current informtion for the selected wine bottle
@@ -344,27 +341,17 @@ def edit_winery():
             cleaned[keys] = cleaned_results[keys]
         i += 1
 
-    if filename == '':
-        filename = cleaned_results["winery_picture"]
-
-    winery_name, winemaker, address, city, state, zipcode, phone_number,\
-        website, bio = cleaned.values()
+    winery_name, winemaker, address, phone_number, website = cleaned.values()
 
     try:
         cursor.execute(cursor.mogrify(
             "UPDATE winery_data "
             "SET  winemaker = %s,"
             "address = %s,"
-            "city = %s,"
-            "state = %s,"
-            "zipcode = %s,"
             "phone_number = %s,"
-            "winery_bio = %s,"
-            "winery_url = %s,"
-            "winery_picture = %s"
+            "winery_url = %s"
             "WHERE winery_name = %s;",
-        (winemaker, address, city, state, zipcode, phone_number,\
-        bio, website, filename, winery_name)))
+        (winemaker, address, phone_number, website, winery_name)))
     except psycopg2.Error as err:
         # pass exception to function
         print_psycopg2_exception(err)
@@ -379,4 +366,37 @@ def edit_winery():
     pg_pool.putconn(conn)
     res = make_response('Added New Winery', 201)
     res.headers['Content-Type'] = 'application/json'
+    return res
+
+
+@bp.route('/delete_winery', methods=['DELETE'])
+def delete_winery():
+    """
+
+    """
+    # Open cursor
+    conn = pg_pool.getconn()
+    cursor = conn.cursor()
+
+    # Pull the information to add
+    data = request.json
+
+
+    try:
+        cursor.execute("DELETE FROM winery_data WHERE winery_name  = '{}';".format(data["winery_name"]))
+    except psycopg2.Error as err:
+        # pass exception to function
+        print_psycopg2_exception(err)
+
+        # rollback the previous transaction before starting another
+        conn.rollback()
+        res = make_response('Query Failed', 422)
+        res.headers['Content-Type'] = 'application/json'
+        return res
+
+    conn.commit()
+    pg_pool.putconn(conn)
+    res = make_response('Added New Winery', 204)
+    res.headers['Content-Type'] = 'application/json'
+
     return res
