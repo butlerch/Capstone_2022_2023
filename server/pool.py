@@ -5,5 +5,6 @@ pg_pool = SimpleConnectionPool(5,200,
     port=os.environ.get('DB_PORT'),
     user=os.environ.get('DB_USER'),
     password=os.environ.get('DB_PASSWORD'),
-    database=os.environ.get('DATABASE_NAME')
+    database=os.environ.get('DATABASE_NAME'),
+    connect_timeout=5
 )
