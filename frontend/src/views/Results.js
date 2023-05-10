@@ -1,6 +1,8 @@
 // State Management & Authentication
 import { useEffect, useState } from "react";
 import { getConfig } from "../config/config";
+import { MenuItem, Select, Typography, FormControl, OutlinedInput } from '@mui/material';
+
 
 // Routing & Paths
 import { useLocation } from "react-router-dom";
@@ -27,7 +29,29 @@ export default function Results() {
   const filters = JSON.parse(location.state)["filters"];
   const [alcs, setAlc] = useState([]);
   const [phs, setPh] = useState([]);
-  const [soils, setSoils] = useState([]);
+  const [soils, setSoils] = useState([
+      "Alluvial",
+      "Basalt",
+      "Chalk",
+      "Clay",
+      "Clay loam",
+      "Granite",
+      "Gravel",
+      "Limestone",
+      "Loam",
+      "Loess",
+      "Marl",
+      "Red clay",
+      "Sand",
+      "Sandstone",
+      "Schist",
+      "Schistose",
+      "Sedimentary",
+      "Shale",
+      "Silt loam",
+      "Volcanic",
+      "Volcanic ash"
+  ]);
   const [casesProduceds, setCasesProduced] = useState([
     "100",
     "100-500",
@@ -129,111 +153,47 @@ export default function Results() {
       }
     }
     let soil = 0;
-    let data3 = [
-      { value: 0, name: "zero" },
-      { value: 1, name: "one" },
-      { value: 2, name: "two" },
-      { value: 3, name: "three" },
-      { value: 4, name: "four" },
-      { value: 5, name: "five" },
-      { value: 6, name: "six" },
-      { value: 7, name: "seven" },
-      { value: 8, name: "eight" },
-      { value: 9, name: "nine" },
-      { value: 10, name: "ten" },
-      { value: 11, name: "eleven" },
-      { value: 12, name: "twelve" },
-      { value: 13, name: "thirteen" },
-      { value: 14, name: "fourteen" },
-      { value: 15, name: "fifteen" },
-      { value: 16, name: "sixteen" },
-      { value: 17, name: "seventeen" },
-      { value: 18, name: "eighteen" },
-      { value: 19, name: "nineteen" },
-      { value: 20, name: "twenty" },
-      { value: 21, name: "twenty-one" },
-      { value: 22, name: "twenty-two" },
-      { value: 23, name: "twenty-three" },
-      { value: 24, name: "twenty-four" },
-      { value: 25, name: "twenty-five" },
-      { value: 26, name: "twenty-six" },
-      { value: 27, name: "twenty-seven" },
-      { value: 28, name: "twenty-eight" },
-      { value: 29, name: "twenty-nine" },
-      { value: 30, name: "thirty" },
-      { value: 31, name: "thirty-one" },
-      { value: 32, name: "thirty-two" },
-      { value: 33, name: "thirty-three" },
-      { value: 34, name: "thirty-four" },
-      { value: 35, name: "thirty-five" },
-      { value: 36, name: "thirty-six" },
-      { value: 37, name: "thirty-seven" },
-      { value: 38, name: "thirty-eight" },
-      { value: 39, name: "thirty-nine" },
-      { value: 40, name: "forty" },
-      { value: 41, name: "forty-one" },
-      { value: 42, name: "forty-two" },
-      { value: 43, name: "forty-three" },
-      { value: 44, name: "forty-four" },
-      { value: 45, name: "forty-five" },
-      { value: 46, name: "forty-six" },
-      { value: 47, name: "forty-seven" },
-      { value: 48, name: "forty-eight" },
-      { value: 49, name: "forty-nine" },
-      { value: 50, name: "fifty" },
-      { value: 51, name: "fifty-one" },
-      { value: 52, name: "fifty-two" },
-      { value: 53, name: "fifty-three" },
-      { value: 54, name: "fifty-four" },
-      { value: 55, name: "fifty-five" },
-      { value: 56, name: "fifty-six" },
-      { value: 57, name: "fifty-seven" },
-      { value: 58, name: "fifty-eight" },
-      { value: 59, name: "fifty-nine" },
-      { value: 60, name: "sixty" },
-      { value: 61, name: "sixty-one" },
-      { value: 62, name: "sixty-two" },
-      { value: 63, name: "sixty-three" },
-      { value: 64, name: "sixty-four" },
-      { value: 65, name: "sixty-five" },
-      { value: 66, name: "sixty-six" },
-      { value: 67, name: "sixty-seven" },
-      { value: 68, name: "sixty-eight" },
-      { value: 69, name: "sixty-nine" },
-      { value: 70, name: "seventy" },
-      { value: 71, name: "seventy-one" },
-      { value: 72, name: "seventy-two" },
-      { value: 73, name: "seventy-three" },
-      { value: 74, name: "seventy-four" },
-      { value: 75, name: "seventy-five" },
-      { value: 76, name: "seventy-six" },
-      { value: 77, name: "seventy-seven" },
-      { value: 78, name: "seventy-eight" },
-      { value: 79, name: "seventy-nine" },
-      { value: 80, name: "eighty" },
-      { value: 81, name: "eighty-one" },
-      { value: 82, name: "eighty-two" },
-      { value: 83, name: "eighty-three" },
-      { value: 84, name: "eighty-four" },
-      { value: 85, name: "eighty-five" },
-      { value: 86, name: "eighty-six" },
-      { value: 87, name: "eighty-seven" },
-      { value: 88, name: "eighty-eight" },
-      { value: 89, name: "eighty-nine" },
-      { value: 90, name: "ninety" },
-      { value: 91, name: "ninety-one" },
-      { value: 92, name: "ninety-two" },
-      { value: 93, name: "ninety-three" },
-      { value: 94, name: "ninety-four" },
-      { value: 95, name: "ninety-five" },
-      { value: 96, name: "ninety-six" },
-      { value: 97, name: "ninety-seven" },
-      { value: 98, name: "ninety-eight" },
-      { value: 99, name: "ninety-nine" },
-      { value: 100, name: "one hundred" },
-    ];
-    setSoils(data3)
   }, []);
+
+  const [minAlc, setMinAlc] = useState("");
+  const [maxAlc, setMaxAlc] = useState("");
+  // const [error, setError] = useState(null);
+
+  useEffect(() => {
+
+    if (minAlc !== "" && maxAlc !== "") {
+
+      if (parseInt(minAlc) < 8 || parseInt(minAlc) > 20) {
+        setError("min value of alc must be between 8 and 20")
+        clearSearchFilter('Alc')
+        return
+      }
+
+      if (parseInt(maxAlc) < 8 || parseInt(maxAlc) > 20) {
+        setError("max value of alc must be between 8 and 20")
+        clearSearchFilter('Alc')
+        return
+      }
+
+
+      if (parseInt(minAlc) > parseInt(maxAlc)) {
+        setError("min value of alc can not larger than max value")
+        clearSearchFilter('Alc')
+        return
+      }
+
+      setError(null)
+      handleFilter();
+      return
+    }
+
+  }, [minAlc, maxAlc]);
+
+  const handleFilter = () => {
+    const range = `${minAlc}-${maxAlc}`;
+    prepareFilterSearch("Alc", range);
+  };
+
   return (
     <>
       <div className="searchResultsContainer">
@@ -449,36 +409,68 @@ export default function Results() {
                 ))}
             </div>
           </div>
+
+
+
+
           <div className="filterSection year">
             <div className="filterTitle">Alc</div>
             <div className="filterElements">
-              {alcs.map((element) => (
-                <>
-                  {searchCriteria &&
-                  searchCriteria["Alc"] &&
-                  element.toString() === searchCriteria["Alc"].toString() ? (
-                    <button
-                      id={element}
-                      key={element}
-                      className="primaryButton narrow mediumPurple"
-                      onClick={() => clearSearchFilter("Alc", element)}
-                    >
-                      {element}
-                    </button>
-                  ) : (
-                    <button
-                      id={element}
-                      key={element}
-                      className="primaryButton narrow whiteBordered"
-                      onClick={() => prepareFilterSearch("Alc", element)}
-                    >
-                      {element}
-                    </button>
-                  )}
-                </>
-              ))}
+              <FormControl variant="outlined" style={{ width: "150px", marginRight: "8px"}}>
+                <Typography variant="subtitle1" style={{ color: "#310866", marginBottom: "4px", marginLeft: "5px" }}>
+                  Min Alc
+                </Typography>
+                <Select
+                  id="min-alc"
+                  value={minAlc}
+                  displayEmpty
+                  className="hideSelectIcon"
+                  onChange={(e) => setMinAlc(e.target.value)}
+                  input={
+                    <OutlinedInput
+                      className="primaryButton narrow whiteBordered CustomSelect"
+                      style={{ height: "40px", borderRadius: "25px", border: "1px solid #310866" }}
+                    />
+                  }
+                >
+                  {Array.from({ length: 13 }, (_, i) => i + 8).map((num) => (
+                    <MenuItem key={num} value={num} className="whiteBordered">
+                      {num + "%"}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <span className="separator" style={{ marginTop: "43px", marginLeft:"8px" }}>-</span>
+              <FormControl variant="outlined" style={{ width: "150px", marginLeft: "8px" }}>
+                <Typography variant="subtitle1" style={{ color: "#310866", marginBottom: "4px", marginLeft: "5px" }}>
+                  Max Alc
+                </Typography>
+                <Select
+                  id="max-alc"
+                  value={maxAlc}
+                  displayEmpty
+                  className="hideSelectIcon"
+                  onChange={(e) => setMaxAlc(e.target.value)}
+                  input={
+                    <OutlinedInput
+                      className="primaryButton narrow whiteBordered CustomSelect"
+                      style={{ height: "40px", borderRadius: "25px", border: "1px solid #310866" }}
+                    />
+                  }
+                >
+                  {Array.from({ length: 13 }, (_, i) => i + 8).map((num) => (
+                    <MenuItem key={num} value={num} className="whiteBordered">
+                      {num + "%"}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </div>
           </div>
+
+
+
+
           <div className="filterSection year">
             <div className="filterTitle">Ph</div>
             <div className="filterElements">
@@ -522,7 +514,7 @@ export default function Results() {
                       id={element}
                       key={element}
                       className="primaryButton narrow mediumPurple"
-                      onClick={() => clearSearchFilter("Soils", element.value)}
+                      onClick={() => clearSearchFilter("Soils", element)}
                     >
                       {element}
                     </button>
@@ -531,9 +523,9 @@ export default function Results() {
                       id={element}
                       key={element}
                       className="primaryButton narrow whiteBordered"
-                      onClick={() => prepareFilterSearch("Soils", element.value)}
+                      onClick={() => prepareFilterSearch("Soils", element)}
                     >
-                      {element.name}
+                      {element}
                     </button>
                   )}
                 </>
