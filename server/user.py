@@ -16,6 +16,14 @@ load_dotenv()
 # Blueprint routing
 bp = Blueprint('user', __name__, url_prefix='/user')
 
+# == Database Instance  ==
+# db = psycopg2.connect(
+#     host=os.environ.get('DB_HOST'),
+#     port=os.environ.get('DB_PORT'),
+#     user=os.environ.get('DB_USER'),
+#     password=os.environ.get('DB_PASSWORD'),
+#     database=os.environ.get('DATABASE_NAME')
+# )
 # Description: Error Handler for Auth0/JWT Errors
 @bp.errorhandler(AuthError)
 def handle_auth_error(ex):
@@ -27,10 +35,8 @@ def handle_auth_error(ex):
 # Description: Given a user_auth id, this function attempts to retrieve a user from the database;
 # if the user doesn't exist, they are created and stored in the database; user data is returned as JSON.
 def retrieve_user(user_auth):
-    # Open cursor for database access
     conn = pg_pool.getconn()
     cursor = conn.cursor()
-    
     # Confirm that the user exists in the database
     cursor.execute(cursor.mogrify("SELECT * FROM users WHERE user_auth = %s", (user_auth,)))
     query_results = cursor.fetchall()
@@ -55,10 +61,8 @@ def retrieve_user(user_auth):
 
 # Description: Given a bottle id, this function retrieves a bottle from the database and returns a JSON object.
 def make_returnable_bottle(bottle_id):
-    # Open cursor for database access
     conn = pg_pool.getconn()
     cursor = conn.cursor()
-    
     cursor.execute("SELECT * FROM bottle_data WHERE bottle_id = '{}';".format(bottle_id))
 
     query_results = cursor.fetchall()
@@ -103,10 +107,8 @@ def user():
 # All other methods invalid.
 @bp.route('/favorites/wines/<int:bottle_id>', methods=['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])
 def wines(bottle_id):
-    # Open cursor for database access
     conn = pg_pool.getconn()
     cursor = conn.cursor()
-    
     # Verifies the JWT, pulls the user_auth id from the token, and retrieves the user.
     payload = verify_jwt(request)
     user_auth = payload["sub"]
@@ -121,11 +123,13 @@ def wines(bottle_id):
             if bottle["bottle_id"] == bottle_id:
                 res = make_response('', 204)
                 res.headers['Content-Type'] = 'application/json'
+                pg_pool.putconn(conn)
                 return res
 
         # If the wine isn't a favorite, return 404.
         res = make_response('Favorite Not Found', 404)
         res.headers['Content-Type'] = 'application/json'
+        pg_pool.putconn(conn)
         return res
 
     # Adds a favorite wine to the user's list of favorites.
@@ -137,6 +141,7 @@ def wines(bottle_id):
             if bottle["bottle_id"] == bottle_id:
                 res = make_response('', 204)
                 res.headers['Content-Type'] = 'application/json'
+                pg_pool.putconn(conn)
                 return res
 
         # If not already in the list, add the target techsheet to the user's list of favorite techsheets.
@@ -150,6 +155,7 @@ def wines(bottle_id):
         conn.commit()
         res = make_response('Added Favorite', 201)
         res.headers['Content-Type'] = 'application/json'
+        pg_pool.putconn(conn)
         return res
 
     # Deletes a favorite wine from the user's list of favorites.
@@ -170,6 +176,7 @@ def wines(bottle_id):
         conn.commit()
         res = make_response('Removed Favorite', 201)
         res.headers['Content-Type'] = 'application/json'
+        pg_pool.putconn(conn)
         return res
     pg_pool.putconn(conn)
 
@@ -179,10 +186,8 @@ def wines(bottle_id):
 
 @bp.route('/favorites/wineries/<winery_name>', methods=['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])
 def winery(winery_name):
-    # Open cursor for database access
     conn = pg_pool.getconn()
     cursor = conn.cursor()
-    
     # Verifies the JWT, pulls the user_auth id from the token, and retrieves the user.
     payload = verify_jwt(request)
     user_auth = payload["sub"]
@@ -197,11 +202,13 @@ def winery(winery_name):
             if winery == winery_name:
                 res = make_response('', 204)
                 res.headers['Content-Type'] = 'application/json'
+                pg_pool.putconn(conn)
                 return res
 
         # If the winery isn't a favorite, return 404.
         res = make_response('Favorite Not Found', 404)
         res.headers['Content-Type'] = 'application/json'
+        pg_pool.putconn(conn)
         return res
 
     # Adds a favorite wine to the user's list of favorites.
@@ -213,6 +220,7 @@ def winery(winery_name):
             if winery["winery_name"] == winery_name:
                 res = make_response('', 204)
                 res.headers['Content-Type'] = 'application/json'
+                pg_pool.putconn(conn)
                 return res
 
         # If not already in the list, add the target winery to the user's list of favorite wineries.
@@ -226,6 +234,7 @@ def winery(winery_name):
         conn.commit()
         res = make_response('Added Favorite', 201)
         res.headers['Content-Type'] = 'application/json'
+        pg_pool.putconn(conn)
         return res
 
     # Deletes a current favorited winery from the user's list of favorite wineries.
@@ -244,8 +253,10 @@ def winery(winery_name):
         conn.commit()
         res = make_response('Removed Favorite', 201)
         res.headers['Content-Type'] = 'application/json'
+        pg_pool.putconn(conn)
         return res
     pg_pool.putconn(conn)
     res = make_response('Invalid Method', 405)
     res.headers['Content-Type'] = 'application/json'
     return res
+

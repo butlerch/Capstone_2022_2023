@@ -3,20 +3,23 @@
 from six.moves.urllib.request import urlopen
 from functools import wraps
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, _request_ctx_stack
-from flask_cors import cross_origin
+# from flask import Flask, request, jsonify, _request_ctx_stack
+# from flask_cors import cross_origin
 from jose import jwt
 import json
 import os
 
 # Loads environment variables
-load_dotenv()
+# load_dotenv()
 
 # Connection parameters for Auth0 instance
 DOMAIN = os.environ.get('AUTH_DOMAIN')
 AUDIENCE = os.environ.get('API_AUDIENCE')
 ALGORITHMS = os.environ.get('AUTH_ALGORITHM')
 
+# DOMAIN = 'winedatalake.us.auth0.com'
+# AUDIENCE = 'aF3LnZv!&W@CB*@JZhTR8k7ZPT3gBGqvNdGmyJLspA#9T6hLJx59&pvAZ6'
+# ALGORITHMS = '[ "RS256" ]'
 
 class AuthError(Exception):
     def __init__(self, error, status_code):
