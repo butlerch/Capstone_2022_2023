@@ -16,15 +16,10 @@ const Winery = () => {
         "winery_name": "",
         "winemaker": "",
         "address": "",
-        "city": "",
-        "state": "",
-        "zipcode": "",
         "phone_number": "",
         "winery_url": "",
-        "winery_bio": ""
+
     })
-
-
 
     const {apiOrigin} = getConfig();
 
@@ -46,15 +41,11 @@ const Winery = () => {
 
     useEffect(() => {
         fetchFilters();
-    }, [])
+    }, [apiOrigin])
 
     async function submit() {
         let formData = new FormData();
-        if(type === 'edit') {
-            technicalForm["winery_name"] = wineryName;
-        }
-        const selectedFile = document.getElementById('upload').files[0];
-        formData.append("file", selectedFile);
+        technicalForm["winery_name"] = wineryName;
         formData.append("technicalForm", JSON.stringify(technicalForm));
         if (type === 'add'){
             try {
@@ -90,6 +81,25 @@ const Winery = () => {
         }
     }
 
+    async function delete_winery() {
+        technicalForm["winery_name"] = wineryName;
+        console.log(JSON.stringify(technicalForm))
+        try {
+            const results = await axios.delete(`${apiOrigin}/admin/delete_winery`, {data: JSON.stringify(technicalForm), 
+                headers: {
+                    "Content-Type": "application/JSON",
+                }
+            });
+        } catch (err) {
+            if (err.response.status === 404) {
+                setError("Unfortunately, nothing matches those search criteria...");
+            } else {
+                /* If the response status code isn't 200 or 404, store the status code and error message. */
+                setError("Status Code " + err.response.status + ": " + err.message + "!");
+            }
+        }
+    }
+
     if (!isAuthenticated) return (<div>No access</div>)
 
     return <div className="winesheetPageContainer">
@@ -105,7 +115,7 @@ const Winery = () => {
                         flexDirection: 'row',
                         justifyContent: "space-between",
                         marginBottom: '1rem'
-                    }}>
+                    }}> 
                         <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset',transform: 'translateY(10px)'}}>
                             { "winery_name".split('_').map(str => <span key={str}
                                                                         style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
@@ -120,8 +130,22 @@ const Winery = () => {
                             </select>
                         </div>
                     </div>}
-                    {Object.keys(technicalForm).filter(i => !(i === 'winery_name')).map((element) => <div className="technicalDataGridItem"
-                                                                      key={element} style={{
+                    {type === 'add' && <div className="technicalDataGridItemName" style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: "space-between",
+                        marginBottom: '1rem'
+                    }}>
+                    <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset',transform: 'translateY(10px)'}}>
+                            { "winery_name".split('_').map(str => <span key={str}
+                                                                        style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
+                        </span>
+                        <input style={{maxWidth: 500}} className="technicalFormInput" devaultValue=''
+                        onChange={x => setWineryName(x.target.value)}/>
+                    </div>}
+                    {Object.keys(technicalForm).filter(i => !(i === 'winery_name')).map((element) => 
+                    <div className="technicalDataGridItem" key={element} style=
+                    {{
                         display: 'flex',
                         flexDirection: 'row',
                         justifyContent: "space-between",
@@ -129,61 +153,25 @@ const Winery = () => {
                     }}>
                         <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset'}}>
                             {element.split('_').map(str => <span key={str}
-                                                                 style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
+                                style={{marginRight: '.2rem'}}>{str[0].toLocaleUpperCase() + str.slice(1)}</span>)}
                         </span>
-                        {element !== 'winery_bio' ?
-                            <input style={{maxWidth: 500}} className="technicalFormInput" value={technicalForm[element]}
-                                   onChange={e => {
-                                       setTechnicalForm((prev) => {
-                                           return {
-                                               ...prev,
-                                               [element]: e.target.value
-                                           }
-                                       })
-                                   }}/> : <textarea style={{maxWidth: 520, height: '12rem', padding: '1rem'}}
-                                                    className="technicalFormInput"
-                                                    value={technicalForm[element]}
-                                                    onChange={e => {
-                                                        setTechnicalForm((prev) => {
-                                                            return {
-                                                                ...prev,
-                                                                [element]: e.target.value
-                                                            }
-                                                        })
-                                                    }}/>}
+                        <input style={{maxWidth: 500}} className="technicalFormInput" value={technicalForm[element]}
+                        onChange={e =>
+                            {
+                                setTechnicalForm((prev) => {
+                                    return {...prev, [element]: e.target.value}
+                                })
+                            }
+                        }
+                        />
                     </div>)}
-                    <div className="technicalDataGridItem"
-                         style={{
-                             display: 'flex',
-                             flexDirection: 'row',
-                             justifyContent: "space-between",
-                             marginBottom: '1rem'
-                         }}>
-                            <span className="technicalDataGridProperty" style={{fontSize: '16px', lineHeight: 'unset'}}>
-                            Winery Picture
-                            </span>
-                        <button style={{
-                            maxWidth: 555,
-                            height: "2rem",
-                            color: '#290b5b',
-                            fontWeight: 'bold',
-                            fontSize: '20px'
-                        }}
-                                onClick={() => {
-                                    document.getElementById('upload').click()
-                                }}
-                                className="technicalFormInput">add from computer
-                        </button>
-
-                        <input id="upload" style={{display: 'none'}} type='file'/>
-                    </div>
                 </div>
                 <div style={{display: "flex", textAlign: 'center', margin: '0 auto'}}>
                     <div className="downloadButton">
                         <div className="primaryButton darkPurple big" onClick={submit}>Submit</div>
                     </div>
                     {type === 'edit' && <div className="downloadButton">
-                        <div className="primaryButton darkPurple big" onClick={submit}>Delete</div>
+                        <div className="primaryButton darkPurple big" onClick={delete_winery}>Delete</div>
                     </div>
                     }
                 </div>
