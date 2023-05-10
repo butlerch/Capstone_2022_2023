@@ -2,9 +2,9 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 
 module.exports = function (app) {
   //本地服务器的地址
-  const developUrl = "https://mineral-catwalk-368610.de.r.appspot.com/";
+  const developUrl = "http://localhost:8080";
   //线上的接口地址
-  const productionUrl = "http://124.70.19.165:11089";
+  const productionUrl = "http://localhost:8080";
   app.use(
     "/api",
     createProxyMiddleware({

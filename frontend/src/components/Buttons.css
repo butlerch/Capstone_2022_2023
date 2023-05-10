@@ -82,12 +82,15 @@
 }
 
 /* Button Color Schemes */
+.hideSelectIcon .MuiSelect-icon {
+    display: none;
+  }  
 
 .whiteBordered {
     background: #FFFFFF;
     color: #310866;
     border-color: #310866;
-}
+} 
 
 .mediumPurple {
     color: #FFFFFF;

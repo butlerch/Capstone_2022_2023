@@ -5,7 +5,7 @@ const { apiOrigin, audience, scope } = getConfig();
 //利用axios的create方法来创建axios实例
 const request = axios.create({
   //基础路径也就是，相同的路径
-  baseURL: '/api',
+  baseURL: 'http://localhost:8080',
   //限定请求时间
   timeout: 400000,
 });
