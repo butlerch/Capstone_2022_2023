@@ -52,4 +52,4 @@ export const reqUser = () =>
   request({
     url: "/user",
     method: "get",
-  });
+});
