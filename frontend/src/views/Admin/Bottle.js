@@ -28,6 +28,7 @@ const Bottle = () => {
         "clusters": "",
         "aging_process": "",
         "cases_produced": "",
+        "description": ""
     })
 
     /* Fetch options to populate the dropdown menu under "Advanced Search." */
@@ -42,7 +43,6 @@ const Bottle = () => {
             formattedFilters.wineries = res1.data.wineries;
             formattedFilters.wineName = res2.data;
             setFilters(formattedFilters);
-            console.log(formattedFilters);
 
         } catch (err) {
             /* Display the error. */
@@ -50,7 +50,7 @@ const Bottle = () => {
         }
     }
 
-    useEffect(() => {fetchFilters()}, [])
+    useEffect(() => {fetchFilters()}, [apiOrigin])
 
 
     if (!isAuthenticated) return (<div>No access</div>)
@@ -200,9 +200,6 @@ const Bottle = () => {
                     <div className="downloadButton">
                         <div className="primaryButton darkPurple big" onClick={submit_wine}>Submit</div>
                     </div>
-                    {type === 'edit' && <div className="downloadButton">
-                        <div className="primaryButton darkPurple big" onClick={delete_wine}>Delete</div>
-                    </div>}
                 </div>
             </div>
         </div>
