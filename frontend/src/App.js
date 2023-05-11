@@ -50,7 +50,7 @@ export default function App() {
         console.log(err.message);
       }
       console.log('token',token);
-      let res = await reqUser();
+    //   let res = await reqUser();
     }
 
     getUser();

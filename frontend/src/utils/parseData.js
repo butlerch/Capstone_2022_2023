@@ -21,7 +21,7 @@ export function parseOverview(techsheetData) {
     overview.subtitle = cleanString(techsheetData["wine_name"][0]);
     for (let i = 1; i < techsheetData["wine_name"].length; i++) {
       overview.subtitle =
-        overview.subtitle + ", " + cleanString(techsheetData["wine_name"][i]);
+        overview.subtitle + " " + cleanString(techsheetData["wine_name"][i]);
     }
   }
 
